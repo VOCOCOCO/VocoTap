@@ -13,19 +13,23 @@
             --bg-main: radial-gradient(circle at top, #050016 0, #02000a 45%, #000 100%);
 
             --accent: #5fa8ff;
-            --accent-soft: #90c5ff;
-            --accent-deep: #1f4fb5;
-            --green: #22c55e;
+            --accent-soft: #9fd1ff;
+            --accent-deep: #1f68ff;
 
-            --text-main: #f9fbff;
-            --text-muted: #a1a4c0;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-stroke: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
 
-            --glass-bg: rgba(11, 16, 40, 0.48);
-            --glass-bg-soft: rgba(16, 20, 46, 0.54);
-            --glass-border: rgba(255, 255, 255, 0.22);
-            --glass-border-soft: rgba(255, 255, 255, 0.16);
+            --text-main: #f5f5ff;
+            --text-soft: #b3b9d9;
+            --text-muted: #7b809c;
 
             --danger: #ff4b6a;
+            --success: #4ce1a1;
+
+            --radius-lg: 24px;
+            --radius-md: 18px;
+            --radius-sm: 12px;
         }
 
         * {
@@ -36,1759 +40,1596 @@
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
             height: 100%;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, sans-serif;
-            background: #000;
-            color: var(--text-main);
         }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Roboto", sans-serif;
+            color: var(--text-main);
+            background: var(--bg-main);
             overflow: hidden;
         }
 
-        /* SNOW CANVAS (iOS Weather style) */
-        #snowCanvas {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        #app {
-            position: relative;
-            width: 100%;
-            max-width: 480px;
+        .app-root {
             height: 100vh;
-            background: var(--bg-main);
-            color: var(--text-main);
+            max-width: 480px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        /* COMMON GLASS CARD BASE */
-        .glass-card {
+            padding: 12px 12px 20px;
             position: relative;
-            border-radius: 20px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.14),
-                rgba(255, 255, 255, 0.02)
-            );
-            background-color: rgba(6, 10, 32, 0.75);
-            border: 1px solid var(--glass-border);
-            box-shadow:
-                0 18px 40px rgba(0, 0, 0, 0.75),
-                0 0 0 1px rgba(1, 4, 18, 0.95);
-            backdrop-filter: blur(24px) saturate(160%);
-            -webkit-backdrop-filter: blur(24px) saturate(160%);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(95,168,255,0.25), rgba(15,20,45,0.85));
+            border: 1px solid rgba(148, 204, 255, 0.4);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.8);
+            backdrop-filter: blur(28px);
+        }
+
+        .app-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            box-shadow: 0 0 24px rgba(95,168,255,0.9);
+            position: relative;
             overflow: hidden;
         }
 
-        .glass-card::after {
-            content: "";
+        .app-logo::after {
+            content: "V";
             position: absolute;
             inset: 0;
-            border-radius: inherit;
-            background:
-                radial-gradient(circle at 15% 0, rgba(255, 255, 255, 0.32), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-            opacity: 0.9;
-        }
-
-        /* SCROLL CONTAINERS */
-        .tab-page {
-            position: absolute;
-            inset: 0 0 80px 0; /* bottom reserved for nav */
-            padding: 10px 16px 12px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            display: none;
-        }
-
-        .tab-page.active {
-            display: block;
-            animation: fadeInScale 260ms ease-out;
-        }
-
-        @keyframes fadeInScale {
-            0% {
-                opacity: 0;
-                transform: translateY(6px) scale(0.99);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
             font-size: 18px;
-            font-weight: 700;
-            margin: 4px 0 4px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 0 12px rgba(0,0,0,0.8);
         }
 
-        .section-subtitle {
-            font-size: 12px;
-            color: var(--text-muted);
+        .app-title-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .app-subtitle {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .app-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pill {
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.22);
+            background: radial-gradient(circle at 0 0, rgba(255,255,255,0.35), rgba(30,40,80,0.7));
+            font-size: 11px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--success);
+            box-shadow: 0 0 6px rgba(76,225,161,0.9);
+        }
+
+        .pill-label {
+            opacity: 0.8;
+        }
+
+        /* MAIN CONTENT AREA */
+        .app-content {
+            flex: 1;
+            position: relative;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            padding: 8px 2px 6px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(8px);
+            transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        /* GLASS CARD */
+        .glass-card {
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+            background-color: var(--glass-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-stroke);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(26px);
+            -webkit-backdrop-filter: blur(26px);
+        }
+
+        .glass-section {
+            padding: 14px 16px;
             margin-bottom: 10px;
         }
 
-        /* HEADER / BALANCE (HOME) */
-        .top-banner {
-            margin: 6px 0 6px;
-            padding: 10px 16px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.26);
-            background:
-                linear-gradient(135deg, rgba(126, 165, 255, 0.3), rgba(25, 32, 80, 0.95));
-            box-shadow:
-                0 18px 42px rgba(0, 0, 0, 0.85),
-                0 0 0 1px rgba(1, 4, 18, 1);
-            backdrop-filter: blur(26px) saturate(170%);
-            -webkit-backdrop-filter: blur(26px) saturate(170%);
+        .glass-section-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
 
-        .top-banner::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.36), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
 
-        .balance-card {
-            margin: 0 0 8px;
-            padding: 10px 14px;
-            border-radius: 18px;
-            border: 1px solid var(--glass-border-soft);
-            background:
-                linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02)),
-                rgba(9, 12, 34, 0.86);
-            box-shadow:
-                0 16px 38px rgba(0, 0, 0, 0.78),
-                0 0 0 1px rgba(4, 7, 24, 0.96);
-            backdrop-filter: blur(22px) saturate(160%);
-            -webkit-backdrop-filter: blur(22px) saturate(160%);
+        .section-subtitle {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        /* HOME SCREEN */
+        .balance-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
 
-        .balance-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.28), transparent 55%);
-            mix-blend-mode: screen;
-            pointer-events: none;
+        .balance-main {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .balance-main-value {
-            font-size: 22px;
-            font-weight: 800;
-        }
-
-        .balance-sub {
+        .balance-label {
             font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
             color: var(--text-muted);
         }
 
-        .balance-badges {
+        .balance-value {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
             display: flex;
+            align-items: baseline;
             gap: 4px;
-            font-size: 11px;
+        }
+
+        .balance-value span:nth-child(2) {
+            font-size: 14px;
             color: var(--accent-soft);
             opacity: 0.9;
         }
 
-        .balance-pill {
-            padding: 3px 9px;
-            border-radius: 999px;
-            border: 1px solid rgba(176, 196, 255, 0.75);
-            background: rgba(7, 10, 32, 0.95);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+        .balance-change {
+            font-size: 11px;
+            color: var(--accent-soft);
+            opacity: 0.8;
         }
 
-        /* COIN */
-        .home-coin-wrap {
-            display: flex;
-            flex-direction: column;
+        .per-tap-pill {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.22);
+            background: linear-gradient(135deg, rgba(95,168,255,0.3), rgba(15,20,45,0.8));
+            font-size: 11px;
+            display: inline-flex;
             align-items: center;
-            margin-top: 18px;
+            gap: 4px;
+        }
+
+        .per-tap-pill-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            background: radial-gradient(circle at 30% 20%, #ffffff, #9fd1ff 45%, #1f68ff 90%);
+            box-shadow: 0 0 10px rgba(95,168,255,0.9);
+        }
+
+        .tap-analytics {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .tap-analytics span strong {
+            color: var(--text-main);
+        }
+
+        .coin-zone {
+            margin-top: 10px;
+            padding: 16px 12px 18px;
+            text-align: center;
         }
 
         .coin-wrapper {
             position: relative;
-            width: 220px;
-            height: 220px;
-        }
-
-        .coin-shadow {
-            position: absolute;
-            inset: 42px;
+            width: 190px;
+            height: 190px;
+            margin: 0 auto 10px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.0));
-            filter: blur(18px);
-            opacity: 0.9;
-            transform: translateY(22px);
-            z-index: 0;
-        }
-
-        .coin {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            padding: 0;
-            cursor: pointer;
-            border: 1px solid rgba(214, 235, 255, 0.75);
-            background:
-                radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.95), rgba(205, 231, 255, 0.7) 24%, rgba(120, 185, 255, 0.8) 44%, rgba(33, 86, 170, 0.95) 70%, rgba(3, 9, 34, 1) 100%);
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.16),
-                0 26px 46px rgba(0, 0, 0, 0.9),
-                inset 0 10px 24px rgba(255, 255, 255, 0.36),
-                inset 0 -22px 28px rgba(1, 4, 18, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
-            overflow: hidden;
-            z-index: 1;
-            backdrop-filter: blur(26px) saturate(180%);
-            -webkit-backdrop-filter: blur(26px) saturate(180%);
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            transform: translateZ(0);
         }
 
-        .coin::before {
-            content: "";
+        .coin-glow {
             position: absolute;
-            inset: 16px;
-            border-radius: 50%;
-            border: 1px solid rgba(240, 248, 255, 0.8);
-            background:
-                radial-gradient(circle at 25% 18%, rgba(255, 255, 255, 0.95), rgba(215, 235, 255, 0.65) 25%, rgba(140, 195, 255, 0.8) 52%, rgba(32, 82, 169, 0.98) 74%, rgba(3, 9, 34, 1) 100%);
-            box-shadow:
-                inset 0 14px 26px rgba(255, 255, 255, 0.42),
-                inset 0 -24px 32px rgba(0, 0, 0, 0.96);
+            inset: 12px;
+            border-radius: inherit;
+            background: radial-gradient(circle at 30% 0, rgba(159, 209, 255, 0.8), rgba(4, 8, 24, 0));
+            filter: blur(8px);
+            opacity: 0.85;
         }
 
-        .coin::after {
-            content: "";
-            position: absolute;
+        .coin-plate {
+            position: relative;
             inset: 0;
-            border-radius: 50%;
+            border-radius: inherit;
             background:
-                radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.48), transparent 58%),
-                radial-gradient(circle at 75% 90%, rgba(0, 10, 40, 0.75), transparent 60%);
-            mix-blend-mode: screen;
-            opacity: 0.95;
-            pointer-events: none;
+                radial-gradient(circle at 30% 30%, #e6f3ff, #9fd1ff 35%, #1f68ff 60%, #040818 95%);
+            box-shadow:
+                0 0 50px rgba(104, 179, 255, 0.7),
+                0 18px 45px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255,255,255,0.35);
+            transform: perspective(700px) rotateX(13deg) rotateY(-12deg);
+            overflow: hidden;
+        }
+
+        .coin-highlight-ring {
+            position: absolute;
+            inset: 10%;
+            border-radius: inherit;
+            border: 1px solid rgba(255,255,255,0.53);
+            opacity: 0.7;
         }
 
         .coin-inner {
-            position: relative;
-            z-index: 2;
+            position: absolute;
+            inset: 25%;
+            border-radius: inherit;
+            background: radial-gradient(circle at 30% 20%, #f6fbff, #bfdcff 50%, #2659d8 100%);
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.35);
+        }
+
+        .coin-letter {
+            position: absolute;
+            inset: 28%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: translateY(7px);
-            text-shadow: 0 16px 24px rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
-
-        /* ТЫ СЮДА ВСТАВИШЬ СВОЙ ЛОГО/БУКВУ */
-        .coin-letter {
-            font-size: 108px;
             font-weight: 900;
-            letter-spacing: 0.03em;
-            color: rgba(229, 242, 255, 0.98);
+            font-size: 70px;
+            color: rgba(6, 20, 60, 0.9);
             text-shadow:
-                0 0 18px rgba(184, 216, 255, 0.95),
-                0 14px 22px rgba(0, 0, 0, 0.98);
-            filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.95));
+                0 1px 0 rgba(255,255,255,0.7),
+                0 -2px 3px rgba(0,0,0,0.55),
+                0 0 26px rgba(255,255,255,0.7);
         }
 
-        .coin.pressed {
-            transform: scale(0.94) translateY(4px);
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.18),
-                0 14px 26px rgba(0, 0, 0, 0.98),
-                inset 0 12px 18px rgba(255, 255, 255, 0.46),
-                inset 0 -24px 32px rgba(0, 0, 0, 1);
-        }
-
-        .coin-info {
-            margin-top: 18px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .coin-info span.value {
-            display: block;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-soft);
-        }
-
-        /* FLOATING TEXT (+0.1) */
-        .floating-text {
-            position: fixed;
-            font-size: 16px;
-            font-weight: 700;
-            color: #f9fafb;
-            pointer-events: none;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
-            animation: floatUp 800ms ease-out forwards;
-            z-index: 999;
-        }
-
-        .floating-text small {
-            font-size: 11px;
-            margin-left: 2px;
+        .coin-glare {
+            position: absolute;
+            top: -15%;
+            left: -15%;
+            width: 70%;
+            height: 45%;
+            border-radius: 60%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.75), transparent 60%);
+            filter: blur(8px);
             opacity: 0.8;
         }
 
+        .coin-wrapper:active .coin-plate {
+            transform: perspective(700px) rotateX(17deg) rotateY(-6deg) scale(0.97);
+            box-shadow:
+                0 0 40px rgba(104, 179, 255, 0.65),
+                0 12px 30px rgba(0, 0, 0, 0.9);
+        }
+
+        .coin-wrapper.tap-anim .coin-plate {
+            animation: pulse 0.19s ease-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: perspective(700px) rotateX(13deg) rotateY(-12deg) scale(1); }
+            50% { transform: perspective(700px) rotateX(16deg) rotateY(-9deg) scale(0.96); }
+            100% { transform: perspective(700px) rotateX(13deg) rotateY(-12deg) scale(1); }
+        }
+
+        .tap-hint {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-bottom: 4px;
+        }
+
+        .tap-gain {
+            font-size: 13px;
+            color: var(--accent-soft);
+        }
+
+        .tap-gain span {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .tap-float {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -10px);
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(0,0,0,0.7);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tap-float.show {
+            animation: floatUp 0.4s ease-out forwards;
+        }
+
         @keyframes floatUp {
-            0% {
-                transform: translate(-50%, 0) scale(0.9);
-                opacity: 1;
-            }
-            60% {
-                transform: translate(-50%, -28px) scale(1.02);
-                opacity: 0.9;
-            }
-            100% {
-                transform: translate(-50%, -52px) scale(0.96);
-                opacity: 0;
-            }
+            0%   { opacity: 1; transform: translate(-50%, -6px); }
+            100% { opacity: 0; transform: translate(-50%, -32px); }
         }
 
-        /* NAVIGATION – TELEGRAM STYLE (LIQUID GLASS) */
-        .bottom-nav {
-            position: fixed;
-            left: 0;
-            bottom: 8px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .nav-inner {
-            pointer-events: auto;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px;
-            border-radius: 999px;
-            background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02)),
-                rgba(7, 8, 24, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.26);
-            box-shadow:
-                0 18px 38px rgba(0, 0, 0, 0.95),
-                0 0 0 1px rgba(1, 4, 16, 0.96);
-            backdrop-filter: blur(28px) saturate(170%);
-            -webkit-backdrop-filter: blur(28px) saturate(170%);
-            position: relative;
-        }
-
-        .nav-inner::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.3), transparent 70%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .nav-item {
-            position: relative;
-            min-width: 82px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: color 0.2s ease-out, transform 0.15s ease-out;
-            z-index: 2;
-        }
-
-        .nav-item-icon {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 1px solid rgba(148, 163, 253, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            background: radial-gradient(circle at 30% 20%, rgba(148, 163, 253, 0.45), rgba(15, 23, 42, 0.9));
-            overflow: hidden;
-        }
-
-        /* ТЫ СЮДА ПОДСТАВИШЬ СВОИ ИКОНКИ (SVG / IMG / BG-IMAGE) */
-        .icon-home {}
-        .icon-tasks {}
-        .icon-leader {}
-        .icon-upgrades {}
-
-        .nav-item.active {
-            color: #eef3ff;
-            transform: translateY(-1px);
-        }
-
-        .nav-item.active .nav-item-icon {
-            border-color: var(--accent-soft);
-            box-shadow: 0 0 18px rgba(93, 148, 255, 0.9);
-        }
-
-        .nav-highlight {
-            position: absolute;
-            height: 40px;
-            border-radius: 999px;
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.28), rgba(102, 158, 255, 0.32));
-            box-shadow:
-                0 12px 26px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(255, 255, 255, 0.16);
-            backdrop-filter: blur(28px) saturate(180%);
-            -webkit-backdrop-filter: blur(28px) saturate(180%);
-            transition: transform 0.26s cubic-bezier(0.22, 0.61, 0.36, 1), width 0.22s ease-out;
-            z-index: 1;
-        }
-
-        /* TASKS */
-        .tasks-banner {
-            position: relative;
-            width: 100%;
-            margin-top: 4px;
-            margin-bottom: 10px;
-            padding: 16px 16px;
-            border-radius: 20px;
-            background:
-                linear-gradient(145deg, rgba(59, 130, 246, 0.8), rgba(15, 23, 42, 0.96));
-            box-shadow:
-                0 18px 34px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(15, 23, 42, 1);
-            backdrop-filter: blur(22px) saturate(170%);
-            -webkit-backdrop-filter: blur(22px) saturate(170%);
-            font-size: 21px;
-            font-weight: 700;
-        }
-
-        .tasks-banner::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.32), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .task-list {
+        /* TASKS SCREEN */
+        .tasks-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-top: 4px;
         }
 
-        .task-card {
-            position: relative;
+        .task-item {
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.2);
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(20,30,70,0.85));
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 10px 10px 12px;
-            border-radius: 16px;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-            background-color: rgba(12, 16, 40, 0.9);
-            border: 1px solid var(--glass-border-soft);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(22px) saturate(160%);
-            -webkit-backdrop-filter: blur(22px) saturate(160%);
-            animation: fadeUpSoft 260ms ease-out;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .task-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 16% 0, rgba(255, 255, 255, 0.2), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        @keyframes fadeUpSoft {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .task-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 14px;
-            background: radial-gradient(circle at 20% 0, #60a5fa, #1d4ed8);
+        .task-top {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            overflow: hidden;
-        }
-
-        /* ТЫ СЮДА ПОДСТАВИШЬ ИКОНКИ ЗАДАНИЙ */
-        .task-icon-inner {}
-
-        .task-body {
-            flex: 1;
-            min-width: 0;
+            justify-content: space-between;
+            gap: 8px;
         }
 
         .task-title {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 13px;
+            font-weight: 500;
         }
 
         .task-reward {
-            font-size: 12px;
-            color: #facc15;
-            margin-top: 3px;
+            font-size: 11px;
+            color: var(--accent-soft);
+            white-space: nowrap;
         }
 
-        .task-boost {
+        .task-desc {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .task-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .task-status {
             font-size: 11px;
             color: var(--text-muted);
-        }
-
-        .task-btn {
-            border: none;
-            border-radius: 999px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 4px;
-            transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s;
-            position: relative;
-            z-index: 2;
         }
 
-        .task-btn-start {
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: #f9fafb;
-            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.7);
+        .task-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--accent-soft);
         }
 
-        .task-btn-start:active {
-            transform: translateY(1px) scale(0.97);
-            box-shadow: 0 3px 8px rgba(37, 99, 235, 0.8);
+        .task-status.completed .task-status-dot {
+            background: var(--success);
         }
 
-        .task-btn-done {
-            background: #16a34a;
-            color: #f9fafb;
-            box-shadow: 0 0 0 1px rgba(22, 163, 74, 0.6);
+        .task-status.completed span {
+            color: var(--success);
         }
 
-        .task-btn-progress {
-            background: #4b5563;
-            color: #e5e7eb;
-            box-shadow: 0 0 0 1px rgba(75, 85, 99, 0.7);
-        }
-
-        /* LEADERBOARD */
-        .leader-header {
+        .task-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 6px;
         }
 
-        .you-card {
-            position: relative;
+        .btn {
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.32);
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            background: linear-gradient(135deg, rgba(95,168,255,0.65), rgba(10,15,35,0.9));
+            color: #ffffff;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(8,12,30,0.9));
+            color: var(--text-soft);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn[disabled] {
+            opacity: 0.4;
+            cursor: default;
+            transform: none;
+        }
+
+        /* LEADERBOARD SCREEN */
+        .lb-user-card,
+        .lb-list {
+            margin-top: 6px;
+        }
+
+        .lb-user-card {
+            padding: 11px 13px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.28);
+            background: linear-gradient(135deg, rgba(95,168,255,0.35), rgba(15,20,45,0.9));
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 16px;
-            background:
-                linear-gradient(135deg, rgba(59, 130, 246, 0.7), rgba(15, 23, 42, 0.98));
-            border: 1px solid rgba(129, 140, 248, 0.9);
-            box-shadow:
-                0 16px 32px rgba(15, 23, 42, 0.98),
-                0 0 0 1px rgba(15, 23, 42, 1);
-            backdrop-filter: blur(24px) saturate(170%);
-            -webkit-backdrop-filter: blur(24px) saturate(170%);
+            gap: 11px;
         }
 
-        .you-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.32), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .avatar {
-            width: 44px;
-            height: 44px;
+        .lb-rank-circle {
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            background: radial-gradient(circle at 20% 10%, #60a5fa, #1d4ed8);
+            border: 1px solid rgba(255,255,255,0.45);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            color: #f9fafb;
-            font-size: 16px;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .avatar.small {
-            width: 32px;
-            height: 32px;
-            font-size: 13px;
-        }
-
-        /* ТЫ СЮДА ПОДСТАВИШЬ АВАТАРКУ ПОЛЬЗОВАТЕЛЯ (IMG/SVG) */
-        .avatar-inner {}
-
-        .you-info-main {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .you-name {
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .you-rank {
-            font-size: 11px;
-            color: #c4dbff;
-        }
-
-        .you-score {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .you-score-sub {
-            font-size: 11px;
-            color: rgba(226, 232, 240, 0.8);
-        }
-
-        .leader-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .leader-row {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            border-radius: 12px;
-            background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-            background-color: rgba(12, 16, 40, 0.96);
-            border: 1px solid rgba(30, 41, 59, 0.9);
-            backdrop-filter: blur(18px) saturate(150%);
-            -webkit-backdrop-filter: blur(18px) saturate(150%);
-        }
-
-        .leader-row::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.16), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .leader-rank {
-            width: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-
-        .leader-body {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .leader-name {
             font-size: 13px;
             font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .leader-score {
-            font-size: 12px;
-            color: #facc15;
-        }
-
-        .leader-prize {
-            width: 34px;
-            height: 34px;
-            border-radius: 12px;
-            background: radial-gradient(circle at 20% 0, rgba(148, 163, 253, 0.8), rgba(15, 23, 42, 1));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: rgba(249, 250, 251, 0.9);
+        .lb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
             overflow: hidden;
             flex-shrink: 0;
         }
 
-        /* ТЫ СЮДА ПОДСТАВИШЬ ИКОНКИ ПРИЗОВ */
-        .leader-prize-inner {}
-
-        .leader-row.me {
-            border-color: rgba(59, 130, 246, 0.9);
-            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.7);
+        .lb-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        /* UPGRADES */
-        .upgrades-summary {
-            position: relative;
-            margin-top: 4px;
-            margin-bottom: 12px;
-            padding: 10px 12px;
-            border-radius: 16px;
-            background:
-                linear-gradient(135deg, rgba(34, 197, 94, 0.34), rgba(15, 23, 42, 0.98));
-            border: 1px solid rgba(22, 163, 74, 0.9);
-            box-shadow:
-                0 14px 26px rgba(15, 23, 42, 0.98),
-                0 0 0 1px rgba(15, 23, 42, 1);
-            backdrop-filter: blur(22px) saturate(160%);
-            -webkit-backdrop-filter: blur(22px) saturate(160%);
+        .lb-user-main {
+            flex: 1;
+        }
+
+        .lb-user-name {
             font-size: 13px;
+            font-weight: 500;
         }
 
-        .upgrades-summary::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 16% 0, rgba(255, 255, 255, 0.32), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
+        .lb-user-handle {
+            font-size: 11px;
+            color: var(--text-soft);
         }
 
-        .upgrades-summary-main {
-            font-size: 16px;
-            font-weight: 700;
+        .lb-user-score {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: right;
         }
 
-        .upgrade-list {
+        .lb-user-score span {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--accent-soft);
+        }
+
+        .lb-list {
+            max-height: calc(100% - 110px);
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 6px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(8,12,30,0.9));
+            font-size: 11px;
+        }
+
+        .lb-row-rank {
+            width: 24px;
+            text-align: center;
+            color: var(--text-soft);
+        }
+
+        .lb-row-name {
+            flex: 1;
+        }
+
+        .lb-row-score {
+            font-weight: 500;
+        }
+
+        .lb-row-score span {
+            font-size: 10px;
+            color: var(--accent-soft);
+        }
+
+        .lb-row.you {
+            border-color: rgba(159,209,255,0.7);
+            background: linear-gradient(135deg, rgba(95,168,255,0.16), rgba(15,20,45,0.95));
+        }
+
+        .lb-footer-note {
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* UPGRADES SCREEN */
+        .upgrades-info {
+            font-size: 11px;
+            color: var(--text-soft);
+            margin-top: 4px;
+        }
+
+        .upgrades-list {
+            margin-top: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .upgrade-card {
-            position: relative;
+        .upgrade-item {
             padding: 10px 12px;
-            border-radius: 16px;
-            background:
-                linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-            background-color: rgba(12, 16, 40, 0.96);
-            border: 1px solid var(--glass-border-soft);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.22);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(14,20,46,0.9));
             display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px) saturate(150%);
-            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .upgrade-card::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.22), transparent 60%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-        }
-
-        .upgrade-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 14px;
-            background: radial-gradient(circle at 20% 0, #22c55e, #15803d);
+        .upgrade-top {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        /* ТЫ СЮДА ПОДСТАВИШЬ ИКОНКУ АПГРЕЙДА */
-        .upgrade-icon-inner {}
-
-        .upgrade-body {
-            flex: 1;
-            min-width: 0;
+            justify-content: space-between;
+            gap: 8px;
         }
 
         .upgrade-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        .upgrade-details {
+        .upgrade-badge {
+            padding: 2px 7px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 10px;
+            color: var(--accent-soft);
+        }
+
+        .upgrade-desc {
             font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 3px;
+            color: var(--text-soft);
+        }
+
+        .upgrade-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
 
         .upgrade-price {
             font-size: 12px;
-            color: #facc15;
-            margin-top: 2px;
+            color: var(--accent-soft);
         }
 
-        .btn-upgrade {
-            border: none;
+        .upgrade-price span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(255,75,106,0.9), rgba(150,20,60,0.95));
+        }
+
+        .upgrade-item.unlocked {
+            border-color: rgba(76,225,161,0.7);
+            background: linear-gradient(135deg, rgba(76,225,161,0.18), rgba(6,18,28,0.95));
+        }
+
+        .upgrade-item.unlocked .upgrade-badge {
+            color: var(--success);
+            border-color: rgba(76,225,161,0.8);
+        }
+
+        .upgrade-item.unlocked .upgrade-price {
+            color: var(--success);
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav-wrap {
+            position: relative;
+            padding: 10px 16px 12px;
+        }
+
+        .bottom-nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 8px 10px;
             border-radius: 999px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            background: linear-gradient(135deg, #22c55e, #4ade80);
-            color: #022c22;
-            box-shadow: 0 8px 16px rgba(34, 197, 94, 0.7);
-            transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+            background: radial-gradient(circle at top, rgba(255,255,255,0.22), rgba(10,10,30,0.95));
+            background-color: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.28);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.9);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            width: 24%;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(95,168,255,0.45), rgba(8,10,32,0.98));
+            box-shadow: 0 10px 25px rgba(95,168,255,0.6);
+            transform: translateX(0%);
+            transition: transform 0.18s ease-out;
+            z-index: 1;
+        }
+
+        .nav-btn {
             position: relative;
             z-index: 2;
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 4px 2px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            color: var(--text-soft);
+            font-size: 9px;
         }
 
-        .btn-upgrade:active {
-            transform: translateY(1px) scale(0.97);
-            box-shadow: 0 3px 8px rgba(22, 163, 74, 0.85);
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            display: block;
         }
 
-        .btn-upgrade.disabled {
-            opacity: 0.45;
-            cursor: default;
-            box-shadow: none;
+        .nav-btn.active {
+            color: #ffffff;
         }
 
-        /* TOAST */
-        .toast {
-            position: fixed;
-            bottom: 96px;
-            left: 50%;
-            transform: translateX(-50%) translateY(40px);
-            background: rgba(12, 16, 40, 0.98);
-            color: #e5e7eb;
+        .nav-btn span {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nav-btn svg path {
+            opacity: 0.7;
+        }
+
+        .nav-btn.active svg path {
+            opacity: 1;
+        }
+
+        /* SCROLLBARS */
+        .lb-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .lb-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.26);
             border-radius: 999px;
-            padding: 8px 14px;
-            font-size: 12px;
-            border: 1px solid rgba(148, 163, 253, 0.5);
-            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.95);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 1000;
-            backdrop-filter: blur(18px) saturate(150%);
-            -webkit-backdrop-filter: blur(18px) saturate(150%);
         }
 
-        .toast.show {
-            animation: toastInOut 2.1s ease-out forwards;
-        }
-
-        @keyframes toastInOut {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(40px);
+        /* SMALL SCREENS */
+        @media (max-height: 640px) {
+            .coin-wrapper {
+                width: 170px;
+                height: 170px;
             }
-            14% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-            86% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(24px);
-            }
-        }
-
-        /* HIDE SCROLLBAR (контент скроллится) */
-        .tab-page::-webkit-scrollbar {
-            width: 0;
-            height: 0;
         }
     </style>
 </head>
 <body>
-<canvas id="snowCanvas"></canvas>
-
-<div id="app">
-    <!-- HOME -->
-    <div id="tab-home" class="tab-page active">
-        <div class="top-banner glass-card">
-            ПРИЗЫ ТОП ПОЛЬЗОВАТЕЛЯМ
-        </div>
-
-        <div class="balance-card">
-            <div>
-                <div class="balance-sub">Ваш баланс</div>
-                <div class="balance-main-value" id="balanceText">0.0</div>
-            </div>
-            <div style="text-align:right;">
-                <div class="balance-sub">За один тап</div>
-                <div class="balance-main-value" style="font-size:16px;" id="tapValueText">0.1</div>
-                <div class="balance-badges">
-                    <span class="balance-pill">
-                        <span>⚡</span> <span id="upgradeLevelText">x1.0</span>
-                    </span>
-                </div>
+<div class="app-root">
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="app-header-left">
+            <div class="app-logo"></div>
+            <div class="app-title-block">
+                <div class="app-title">Tap Glass</div>
+                <div class="app-subtitle" id="userLabel">Loading…</div>
             </div>
         </div>
+        <div class="app-header-right">
+            <div class="pill">
+                <div class="pill-dot"></div>
+                <div class="pill-label" id="sessionStat">Session 0 taps</div>
+            </div>
+        </div>
+    </header>
 
-        <div class="home-coin-wrap">
-            <div class="coin-wrapper">
-                <div class="coin-shadow"></div>
-                <button class="coin" id="coinButton">
-                    <div class="coin-inner">
-                        <!-- ТУТ ТЫ СТАВИШЬ СВОЮ БУКВУ/ЛОГО -->
-                        <span class="coin-letter">V</span>
+    <!-- CONTENT -->
+    <main class="app-content">
+        <!-- HOME -->
+        <section class="screen active" id="screen-home" data-tab="home">
+            <div class="glass-card glass-section">
+                <div class="glass-section-header">
+                    <div>
+                        <div class="section-title">Баланс</div>
+                        <div class="section-subtitle">Твои V-монеты</div>
                     </div>
-                </button>
-            </div>
-            <div class="coin-info">
-                <span class="value">Тапните по монете</span>
-                зарабатывайте очки и поднимайтесь в топ
-            </div>
-        </div>
-    </div>
-
-    <!-- TASKS -->
-    <div id="tab-tasks" class="tab-page">
-        <div class="tasks-banner">
-            Задания
-        </div>
-        <div class="section-subtitle">
-            Выполняйте простые действия и получайте <b>+0.1</b> к награде за каждый тап.
-        </div>
-        <div id="tasksList" class="task-list"></div>
-    </div>
-
-    <!-- LEADERBOARD -->
-    <div id="tab-leaderboard" class="tab-page">
-        <div class="section-title">Лидерборд</div>
-        <div class="section-subtitle">
-            Топ-10 пользователей по балансу очков. Призы для лучших — в правой колонке.
-        </div>
-
-        <div class="leader-header">
-            <div class="you-card" id="youCard">
-                <div class="avatar" id="youAvatar">
-                    <div class="avatar-inner">YOU</div>
-                </div>
-                <div class="you-info-main">
-                    <div class="you-name" id="youName">Вы</div>
-                    <div class="you-rank" id="youRankText">Место — #1 из 10</div>
-                </div>
-                <div style="text-align:right;">
-                    <div class="you-score" id="youScore">0.0</div>
-                    <div class="you-score-sub">Ваш баланс</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="leaderList" class="leader-list"></div>
-    </div>
-
-    <!-- UPGRADES -->
-    <div id="tab-upgrades" class="tab-page">
-        <div class="section-title">Апгрейды</div>
-        <div class="upgrades-summary">
-            <div class="upgrades-summary-main">
-                Текущий тап: <span id="tapSummaryValue">0.1</span> очков
-            </div>
-            <div>
-                Базовое значение: <span id="baseTapValueText">0.1</span>,
-                бонусы от заданий: <span id="taskBonusText">0.0</span>,
-                множитель: <span id="multiplierText">x1.0</span>.
-            </div>
-        </div>
-
-        <div class="upgrade-list">
-            <div class="upgrade-card">
-                <div class="upgrade-icon">
-                    <div class="upgrade-icon-inner"></div>
-                </div>
-                <div class="upgrade-body">
-                    <div class="upgrade-title">Мультипликатор тapа</div>
-                    <div class="upgrade-details">
-                        Каждый уровень увеличивает награду за тап на <b>+20%</b>.
-                    </div>
-                    <div class="upgrade-price">
-                        Уровень: <span id="upgradeLevelLabel">0</span>,
-                        Цена следующего: <span id="upgradePriceLabel">10.0</span> очков
+                    <div class="per-tap-pill">
+                        <div class="per-tap-pill-icon"></div>
+                        <div><span id="perTapValue">+1</span> за тап</div>
                     </div>
                 </div>
-                <button id="upgradeButton" class="btn-upgrade">Улучшить</button>
+                <div class="balance-row">
+                    <div class="balance-main">
+                        <div class="balance-label">Всего</div>
+                        <div class="balance-value">
+                            <span id="balanceValue">0</span><span>V</span>
+                        </div>
+                        <div class="balance-change" id="balanceChange"></div>
+                    </div>
+                </div>
+                <div class="tap-analytics">
+                    <span>За сессию: <strong id="sessionTapsValue">0</strong> тапов</span>
+                    <span>Всего тапов: <strong id="totalTapsValue">0</strong></span>
+                </div>
             </div>
+
+            <div class="glass-card coin-zone">
+                <div class="coin-wrapper" id="coin">
+                    <div class="coin-glow"></div>
+                    <div class="coin-plate">
+                        <div class="coin-highlight-ring"></div>
+                        <div class="coin-inner"></div>
+                        <div class="coin-letter">V</div>
+                        <div class="coin-glare"></div>
+                    </div>
+                    <div class="tap-float" id="tapFloat">+1</div>
+                </div>
+                <div class="tap-hint">Тапай по монете, чтобы зарабатывать V-монеты</div>
+                <div class="tap-gain">Текущий множитель: <span id="tapMultiplierLabel">x1</span></div>
+            </div>
+        </section>
+
+        <!-- TASKS -->
+        <section class="screen" id="screen-tasks" data-tab="tasks">
+            <div class="glass-card glass-section">
+                <div class="glass-section-header">
+                    <div>
+                        <div class="section-title">Задания</div>
+                        <div class="section-subtitle">Подписки и активности за звёзды</div>
+                    </div>
+                </div>
+                <div class="tasks-list" id="tasksList">
+                    <!-- JS заполнит -->
+                </div>
+            </div>
+        </section>
+
+        <!-- LEADERBOARD -->
+        <section class="screen" id="screen-leaderboard" data-tab="leaderboard">
+            <div class="glass-card glass-section" style="height: 100%; display: flex; flex-direction: column;">
+                <div class="glass-section-header">
+                    <div>
+                        <div class="section-title">Лидерборд</div>
+                        <div class="section-subtitle">Топ игроков по V-монетам</div>
+                    </div>
+                    <button class="btn secondary" id="refreshLeaderboardBtn" style="padding-inline: 10px;">Обновить</button>
+                </div>
+
+                <div class="lb-user-card" id="lbUserCard">
+                    <div class="lb-rank-circle" id="lbUserRank">–</div>
+                    <div class="lb-avatar" id="lbUserAvatar">
+                        <!-- если есть фото, подставим img -->
+                    </div>
+                    <div class="lb-user-main">
+                        <div class="lb-user-name" id="lbUserName">You</div>
+                        <div class="lb-user-handle" id="lbUserHandle">@you</div>
+                    </div>
+                    <div class="lb-user-score" id="lbUserScore">
+                        0<span> V</span>
+                    </div>
+                </div>
+
+                <div class="lb-list" id="lbList">
+                    <!-- JS заполнит -->
+                </div>
+
+                <div class="lb-footer-note">
+                    Данные берутся с сервера по initData. Обновляй, чтобы увидеть актуальный топ.
+                </div>
+            </div>
+        </section>
+
+        <!-- UPGRADES -->
+        <section class="screen" id="screen-upgrades" data-tab="upgrades">
+            <div class="glass-card glass-section">
+                <div class="glass-section-header">
+                    <div>
+                        <div class="section-title">Апгрейды</div>
+                        <div class="section-subtitle">Усиления за Telegram Stars</div>
+                    </div>
+                </div>
+                <div class="upgrades-info">
+                    Покупай апгрейды за звёзды через <b>openInvoice</b>, чтобы увеличить доход с каждого тапа.
+                </div>
+                <div class="upgrades-list" id="upgradesList">
+                    <!-- JS заполнит -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav-wrap">
+        <div class="bottom-nav">
+            <div class="nav-indicator" id="navIndicator"></div>
+
+            <button class="nav-btn active" data-tab-target="home">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4.5 10.5L12 4.8l7.5 5.7V19a1.5 1.5 0 0 1-1.5 1.5h-3.75a.75.75 0 0 1-.75-.75v-4.5h-3v4.5a.75.75 0 0 1-.75.75H6A1.5 1.5 0 0 1 4.5 19v-8.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Дом</span>
+            </button>
+
+            <button class="nav-btn" data-tab-target="tasks">
+                <svg viewBox="0 0 24 24">
+                    <path d="M7.5 4.5h9a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V6a1.5 1.5 0 0 1 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <path d="M9 9h6M9 12h3.5M9 15h4.5M10 3h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Задачи</span>
+            </button>
+
+            <button class="nav-btn" data-tab-target="leaderboard">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6 10.5v9M12 5.5v14M18 8v11.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <path d="M4 10.5h4M10 5.5h4M16 8h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Топ</span>
+            </button>
+
+            <button class="nav-btn" data-tab-target="upgrades">
+                <svg viewBox="0 0 24 24">
+                    <path d="M7.5 5h9l1.5 4.5-6 9-6-9L7.5 5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M10 9l2 2 2-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Буст</span>
+            </button>
         </div>
     </div>
-
-    <!-- NAVIGATION (СТЕКЛЯННАЯ, БЕЗ ЭМОДЗИ, ТЫ ВСТАВИШЬ ИКОНКИ) -->
-    <div class="bottom-nav">
-        <div class="nav-inner" id="navInner">
-            <div class="nav-highlight" id="navHighlight"></div>
-
-            <div class="nav-item active" data-tab="home">
-                <div class="nav-item-icon icon-home"></div>
-                <div>Главная</div>
-            </div>
-            <div class="nav-item" data-tab="tasks">
-                <div class="nav-item-icon icon-tasks"></div>
-                <div>Задания</div>
-            </div>
-            <div class="nav-item" data-tab="leaderboard">
-                <div class="nav-item-icon icon-leader"></div>
-                <div>Лидерборд</div>
-            </div>
-            <div class="nav-item" data-tab="upgrades">
-                <div class="nav-item-icon icon-upgrades"></div>
-                <div>Апгрейды</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
 </div>
 
 <script>
-    // ---------- CONFIG ----------
-    const STORAGE_KEY = "tap_coin_state_v2";
-    const LEADERBOARD_URL = "https://yourserver.com/getLeaderboard"; // ЗАМЕНИ НА СВОЙ URL
+    // ==============================
+    // 1. Telegram Mini App интеграция
+    // ==============================
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
 
-    const DEFAULT_STATE = {
-        balance: 0,
-        baseTap: 0.1,
-        taskBonus: 0,
-        multiplierLevel: 0,
-        tasks: {} // id -> status: "idle" | "started" | "completed"
-    };
+    const initDataUnsafe = tg ? tg.initDataUnsafe : {};
+    const currentUser = initDataUnsafe.user || null;
 
-    const TASKS = [
+    // ==============================
+    // 2. Базовые переменные игры
+    // ==============================
+    let balance = 0;
+    let perTap = 1;
+    let tapMultiplier = 1;
+    let totalTaps = 0;
+    let sessionTaps = 0;
+
+    // для апгрейдов: локальное состояние
+    const upgrades = [
         {
-            id: "task_subscribe_channel",
-            title: "Подпишитесь на официальный канал",
-            rewardBoost: 0.1,
-            url: "https://t.me/"
+            id: 'tap_x2',
+            title: 'x2 Tap Boost',
+            description: 'Удваивает доход за тап навсегда.',
+            priceStars: 25,
+            levelLabel: 'Epic',
+            unlocked: false,
         },
         {
-            id: "task_open_market",
-            title: "Откройте раздел Маркет",
-            rewardBoost: 0.1,
-            url: "https://t.me/"
+            id: 'tap_x3',
+            title: 'x3 Tap Boost',
+            description: 'Тройной доход за каждый тап.',
+            priceStars: 60,
+            levelLabel: 'Legendary',
+            unlocked: false,
         },
         {
-            id: "task_stars_page",
-            title: "Откройте страницу Stars",
-            rewardBoost: 0.1,
-            url: "https://t.me/"
-        },
-        {
-            id: "task_invite_friend",
-            title: "Пригласите друга в мини-апп",
-            rewardBoost: 0.1,
-            url: "https://t.me/"
+            id: 'auto_miner',
+            title: 'Auto Miner',
+            description: 'Пассивный доход каждую минуту.',
+            priceStars: 80,
+            levelLabel: 'Utility',
+            unlocked: false,
         }
     ];
 
-    let appState = loadState();
-    let activeTab = "home";
-    let lastStartedTasks = new Set();
-
-    let leaderboardData = null;
-    let leaderboardSyncTimeout = null;
-
-    // ---------- STATE UTILS ----------
-    function loadState() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return { ...DEFAULT_STATE };
-            const parsed = JSON.parse(raw);
-            return { ...DEFAULT_STATE, ...parsed };
-        } catch (e) {
-            console.warn("Failed to load state", e);
-            return { ...DEFAULT_STATE };
+    // Задания (пример)
+    const tasks = [
+        {
+            id: 'sub_main',
+            title: 'Подписаться на основной канал',
+            description: 'Нажми "Начать" и подпишись на канал.',
+            reward: 3,
+            link: 'https://t.me/your_channel',
+            status: 'new' // new | pending | completed
+        },
+        {
+            id: 'sub_chat',
+            title: 'Вступить в чат комьюнити',
+            description: 'Заходи в чат и общайся с другими игроками.',
+            reward: 3,
+            link: 'https://t.me/your_chat',
+            status: 'new'
         }
-    }
+    ];
 
-    function saveState() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-        } catch (e) {
-            console.warn("Failed to save state", e);
-        }
-    }
+    // ==============================
+    // 3. Настройки API (замени на свои)
+    // ==============================
+    const API_BASE = 'https://your-backend.com'; // <--- Свой домен
+    const LEADERBOARD_API = API_BASE + '/api/leaderboard';
+    const TASK_CHECK_API = API_BASE + '/api/tasks/check';
+    const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
 
-    function getMultiplier() {
-        return 1 + appState.multiplierLevel * 0.2;
-    }
+    // Пример ссылки инвойса (замени на свою)
+    // Можно передавать query-параметр upgradeId, чтобы бот понимал, за что платёж
+    const INVOICE_BASE_URL = 'https://t.me/your_bot?start=invoice';
 
-    function getTapValue() {
-        return (appState.baseTap + appState.taskBonus) * getMultiplier();
-    }
+    // ==============================
+    // 4. DOM-элементы
+    // ==============================
+    const balanceValueEl = document.getElementById('balanceValue');
+    const perTapValueEl = document.getElementById('perTapValue');
+    const tapMultiplierLabelEl = document.getElementById('tapMultiplierLabel');
+    const balanceChangeEl = document.getElementById('balanceChange');
+    const sessionTapsValueEl = document.getElementById('sessionTapsValue');
+    const totalTapsValueEl = document.getElementById('totalTapsValue');
+    const sessionStatEl = document.getElementById('sessionStat');
+    const userLabelEl = document.getElementById('userLabel');
+    const tapFloatEl = document.getElementById('tapFloat');
+    const coinEl = document.getElementById('coin');
 
-    function formatPoints(v) {
-        return v.toFixed(1);
-    }
+    const tasksListEl = document.getElementById('tasksList');
+    const upgradesListEl = document.getElementById('upgradesList');
 
-    function showToast(text) {
-        const toast = document.getElementById("toast");
-        toast.textContent = text;
-        toast.classList.remove("show");
-        void toast.offsetWidth;
-        toast.classList.add("show");
-    }
+    const lbUserRankEl = document.getElementById('lbUserRank');
+    const lbUserAvatarEl = document.getElementById('lbUserAvatar');
+    const lbUserNameEl = document.getElementById('lbUserName');
+    const lbUserHandleEl = document.getElementById('lbUserHandle');
+    const lbUserScoreEl = document.getElementById('lbUserScore');
+    const lbListEl = document.getElementById('lbList');
+    const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
 
-    // ---------- HAPTIC ----------
-    function hapticTap() {
-        try {
-            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
-                Telegram.WebApp.HapticFeedback.impactOccurred("light");
-            } else if (navigator.vibrate) {
-                navigator.vibrate(30);
-            }
-        } catch (e) {}
-    }
+    const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
+    const screens = Array.from(document.querySelectorAll('.screen'));
+    const navIndicatorEl = document.getElementById('navIndicator');
 
-    // ---------- FLOATING TEXT ----------
-    function spawnFloatingText(value, clientX, clientY) {
-        const el = document.createElement("div");
-        el.className = "floating-text";
-        el.innerHTML = "+" + formatPoints(value) + "<small> очк.</small>";
-        el.style.left = clientX + "px";
-        el.style.top = clientY + "px";
-        document.body.appendChild(el);
-        el.addEventListener("animationend", () => el.remove());
-    }
+    // ==============================
+    // 5. Инициализация пользователя
+    // ==============================
+    function initUserInfo() {
+        if (currentUser) {
+            const name = [currentUser.first_name, currentUser.last_name].filter(Boolean).join(' ');
+            userLabelEl.textContent = name || 'Player';
+            lbUserNameEl.textContent = name || 'Player';
+            lbUserHandleEl.textContent = currentUser.username ? '@' + currentUser.username : 'без юзернейма';
 
-    // ---------- BALANCE UI ----------
-    function refreshBalanceUI() {
-        const balanceText = document.getElementById("balanceText");
-        const tapValueText = document.getElementById("tapValueText");
-        const upgradeLevelText = document.getElementById("upgradeLevelText");
-        const tapSummaryValue = document.getElementById("tapSummaryValue");
-        const baseTapValueText = document.getElementById("baseTapValueText");
-        const taskBonusText = document.getElementById("taskBonusText");
-        const multiplierText = document.getElementById("multiplierText");
-
-        const tap = getTapValue();
-        balanceText.textContent = formatPoints(appState.balance);
-        tapValueText.textContent = formatPoints(tap);
-        if (tapSummaryValue) tapSummaryValue.textContent = formatPoints(tap);
-        if (baseTapValueText) baseTapValueText.textContent = formatPoints(appState.baseTap);
-        if (taskBonusText) taskBonusText.textContent = formatPoints(appState.taskBonus);
-        if (multiplierText) multiplierText.textContent = "x" + getMultiplier().toFixed(1);
-        if (upgradeLevelText) upgradeLevelText.textContent = "x" + getMultiplier().toFixed(1);
-
-        scheduleLeaderboardSync();
-    }
-
-    // ---------- COIN ----------
-    (function setupCoin() {
-        const coinBtn = document.getElementById("coinButton");
-
-        function press() {
-            coinBtn.classList.add("pressed");
-        }
-
-        function release(ev) {
-            if (!coinBtn.classList.contains("pressed")) return;
-            coinBtn.classList.remove("pressed");
-            const rect = coinBtn.getBoundingClientRect();
-            const x = ev ? ev.clientX : rect.left + rect.width / 2;
-            const y = ev ? ev.clientY : rect.top + rect.height / 2;
-            doTap(x, y);
-        }
-
-        function cancel() {
-            coinBtn.classList.remove("pressed");
-        }
-
-        coinBtn.addEventListener("pointerdown", (e) => {
-            e.preventDefault();
-            coinBtn.setPointerCapture(e.pointerId);
-            press();
-        });
-
-        coinBtn.addEventListener("pointerup", (e) => {
-            e.preventDefault();
-            coinBtn.releasePointerCapture(e.pointerId);
-            release(e);
-        });
-
-        coinBtn.addEventListener("pointercancel", (e) => {
-            e.preventDefault();
-            coinBtn.releasePointerCapture(e.pointerId);
-            cancel();
-        });
-    })();
-
-    function doTap(x, y) {
-        const value = getTapValue();
-        appState.balance += value;
-        saveState();
-        refreshBalanceUI();
-        updateYouCard();
-        updateLeaderboardUI();
-        hapticTap();
-        spawnFloatingText(value, x, y);
-    }
-
-    // ---------- TASKS ----------
-    function renderTasks() {
-        const container = document.getElementById("tasksList");
-        if (!container) return;
-        container.innerHTML = "";
-        TASKS.forEach(task => {
-            const state = appState.tasks[task.id] || "idle";
-            const card = document.createElement("div");
-            card.className = "task-card";
-
-            const icon = document.createElement("div");
-            icon.className = "task-icon";
-            const iconInner = document.createElement("div");
-            iconInner.className = "task-icon-inner";
-            icon.appendChild(iconInner);
-
-            const body = document.createElement("div");
-            body.className = "task-body";
-
-            const title = document.createElement("div");
-            title.className = "task-title";
-            title.textContent = task.title;
-
-            const reward = document.createElement("div");
-            reward.className = "task-reward";
-            reward.textContent = "+0.1 к награде за тап";
-
-            const boost = document.createElement("div");
-            boost.className = "task-boost";
-            boost.textContent = "Откройте ссылку и вернитесь в мини-апп";
-
-            body.appendChild(title);
-            body.appendChild(reward);
-            body.appendChild(boost);
-
-            const btn = document.createElement("button");
-            btn.className = "task-btn";
-
-            if (state === "completed") {
-                btn.classList.add("task-btn-done");
-                btn.textContent = "Получено ✓";
-                btn.disabled = true;
-            } else if (state === "started") {
-                btn.classList.add("task-btn-progress");
-                btn.textContent = "Выполняется…";
-                btn.disabled = true;
+            if (currentUser.photo_url) {
+                const img = document.createElement('img');
+                img.src = currentUser.photo_url;
+                img.alt = 'avatar';
+                lbUserAvatarEl.innerHTML = '';
+                lbUserAvatarEl.appendChild(img);
             } else {
-                btn.classList.add("task-btn-start");
-                btn.textContent = "Начать";
-                btn.addEventListener("click", () => startTask(task));
+                lbUserAvatarEl.innerHTML = '';
             }
+        } else {
+            userLabelEl.textContent = 'Гость';
+            lbUserNameEl.textContent = 'Гость';
+            lbUserHandleEl.textContent = '';
+        }
+    }
 
-            card.appendChild(icon);
-            card.appendChild(body);
-            card.appendChild(btn);
-            container.appendChild(card);
+    // ==============================
+    // 6. Обновление UI
+    // ==============================
+    function updateBalanceUI(diff = 0) {
+        balanceValueEl.textContent = balance.toString();
+        totalTapsValueEl.textContent = totalTaps.toString();
+        sessionTapsValueEl.textContent = sessionTaps.toString();
+        sessionStatEl.textContent = `Session ${sessionTaps} taps`;
+
+        if (diff !== 0) {
+            const sign = diff > 0 ? '+' : '';
+            balanceChangeEl.textContent = `${sign}${diff} V`;
+            balanceChangeEl.style.opacity = '1';
+            setTimeout(() => {
+                balanceChangeEl.style.opacity = '0';
+            }, 550);
+        } else {
+            balanceChangeEl.textContent = '';
+        }
+    }
+
+    function updateTapInfoUI() {
+        perTapValueEl.textContent = `+${perTap}`;
+        tapMultiplierLabelEl.textContent = `x${tapMultiplier}`;
+    }
+
+    function showTapFloat(value) {
+        tapFloatEl.textContent = `+${value}`;
+        tapFloatEl.classList.remove('show');
+        // перезапуск анимации
+        void tapFloatEl.offsetWidth;
+        tapFloatEl.classList.add('show');
+    }
+
+    // ==============================
+    // 7. Логика тапа
+    // ==============================
+    function handleTap() {
+        const gain = perTap * tapMultiplier;
+        balance += gain;
+        totalTaps += 1;
+        sessionTaps += 1;
+
+        updateBalanceUI(gain);
+        showTapFloat(gain);
+        coinEl.classList.add('tap-anim');
+        setTimeout(() => coinEl.classList.remove('tap-anim'), 190);
+
+        // TODO: при желании отправлять на сервер статистику тапа
+        // sendTapToServer(gain);
+    }
+
+    coinEl.addEventListener('click', handleTap);
+
+    // ==============================
+    // 8. Навигация по вкладкам
+    // ==============================
+    function setActiveTab(tabName) {
+        screens.forEach(screen => {
+            if (screen.dataset.tab === tabName) {
+                screen.classList.add('active');
+            } else {
+                screen.classList.remove('active');
+            }
+        });
+
+        navButtons.forEach((btn, index) => {
+            const target = btn.dataset.tabTarget;
+            if (target === tabName) {
+                btn.classList.add('active');
+                moveNavIndicator(index);
+            } else {
+                btn.classList.remove('active');
+            }
         });
     }
 
-    function startTask(task) {
-        appState.tasks[task.id] = "started";
-        lastStartedTasks.add(task.id);
-        saveState();
-        renderTasks();
-
-        window.open(task.url, "_blank");
-
-        showToast("Выполните действие и вернитесь в мини-апп — задание засчитается автоматически.");
+    function moveNavIndicator(index) {
+        const percent = index * 25;
+        navIndicatorEl.style.transform = `translateX(${percent}%)`;
     }
 
-    function completeTask(taskId) {
-        const prev = appState.tasks[taskId];
-        if (prev === "completed") return;
-
-        appState.tasks[taskId] = "completed";
-        appState.taskBonus += 0.1;
-        saveState();
-        refreshBalanceUI();
-        renderTasks();
-        showToast("Задание выполнено! Награда за тап увеличена на +0.1.");
-    }
-
-    function handleReturnFromTasks() {
-        let anyCompleted = false;
-        for (const id of Object.keys(appState.tasks)) {
-            if (appState.tasks[id] === "started") {
-                completeTask(id);
-                anyCompleted = true;
-            }
-        }
-        if (anyCompleted) {
-            lastStartedTasks.clear();
-        }
-    }
-
-    window.addEventListener("focus", handleReturnFromTasks);
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") {
-            handleReturnFromTasks();
-        }
+    navButtons.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tabTarget;
+            setActiveTab(target);
+        });
     });
 
-    // ---------- TELEGRAM USER ----------
-    function getTelegramUser() {
-        try {
-            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-                return Telegram.WebApp.initDataUnsafe.user;
+    // ==============================
+    // 9. Рендер заданий
+    // ==============================
+    function renderTasks() {
+        tasksListEl.innerHTML = '';
+
+        tasks.forEach(task => {
+            const item = document.createElement('div');
+            item.className = 'task-item';
+
+            const top = document.createElement('div');
+            top.className = 'task-top';
+
+            const left = document.createElement('div');
+            const title = document.createElement('div');
+            title.className = 'task-title';
+            title.textContent = task.title;
+
+            const desc = document.createElement('div');
+            desc.className = 'task-desc';
+            desc.textContent = task.description;
+
+            left.appendChild(title);
+            left.appendChild(desc);
+
+            const reward = document.createElement('div');
+            reward.className = 'task-reward';
+            reward.textContent = `+${task.reward} ★`;
+
+            top.appendChild(left);
+            top.appendChild(reward);
+
+            const bottom = document.createElement('div');
+            bottom.className = 'task-bottom';
+
+            const status = document.createElement('div');
+            status.className = 'task-status';
+            if (task.status === 'completed') {
+                status.classList.add('completed');
             }
-        } catch (e) {}
-        return null;
-    }
 
-    function getInitData() {
-        try {
-            if (window.Telegram && Telegram.WebApp) {
-                return Telegram.WebApp.initData || "";
+            const statusDot = document.createElement('div');
+            statusDot.className = 'task-status-dot';
+
+            const statusText = document.createElement('span');
+            if (task.status === 'new') statusText.textContent = 'Новое задание';
+            if (task.status === 'pending') statusText.textContent = 'Ожидает проверки';
+            if (task.status === 'completed') statusText.textContent = 'Выполнено';
+
+            status.appendChild(statusDot);
+            status.appendChild(statusText);
+
+            const actions = document.createElement('div');
+            actions.className = 'task-actions';
+
+            const startBtn = document.createElement('button');
+            startBtn.className = 'btn secondary';
+            startBtn.textContent = task.status === 'new' ? 'Начать' : 'Открыть';
+
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'btn';
+            checkBtn.textContent = 'Проверить';
+
+            if (task.status === 'completed') {
+                checkBtn.disabled = true;
             }
-        } catch (e) {}
-        return "";
-    }
 
-    function initialsFromName(name) {
-        if (!name) return "YOU";
-        const parts = name.split(/[\s_]+/).filter(Boolean);
-        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-        return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-
-    // ---------- REAL LEADERBOARD SYNC ----------
-    function scheduleLeaderboardSync() {
-        if (leaderboardSyncTimeout) clearTimeout(leaderboardSyncTimeout);
-        leaderboardSyncTimeout = setTimeout(syncLeaderboardWithServer, 800);
-    }
-
-    async function syncLeaderboardWithServer() {
-        const initData = getInitData();
-        if (!LEADERBOARD_URL) return;
-
-        try {
-            const res = await fetch(LEADERBOARD_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    initData,
-                    balance: appState.balance
-                })
+            startBtn.addEventListener('click', () => {
+                if (tg && task.link) {
+                    tg.openTelegramLink(task.link);
+                } else if (task.link) {
+                    window.open(task.link, '_blank');
+                }
+                if (task.status === 'new') {
+                    task.status = 'pending';
+                    renderTasks();
+                }
             });
 
-            if (!res.ok) throw new Error("HTTP " + res.status);
+            checkBtn.addEventListener('click', () => {
+                if (task.status === 'completed') return;
+                // Здесь должен быть запрос к серверу, который уже проверяет подписку/действие
+                checkTaskOnServer(task);
+            });
+
+            actions.appendChild(startBtn);
+            actions.appendChild(checkBtn);
+
+            bottom.appendChild(status);
+            bottom.appendChild(actions);
+
+            item.appendChild(top);
+            item.appendChild(bottom);
+
+            tasksListEl.appendChild(item);
+        });
+    }
+
+    async function checkTaskOnServer(task) {
+        // ⚠️ ЭТО ШАБЛОН. На реальном сервере нужно:
+        // 1) по initData понять user_id
+        // 2) проверить подписку / выполнение
+        // 3) вернуть { ok: true/false, alreadyCompleted: bool }
+        try {
+            const payload = {
+                task_id: task.id
+            };
+
+            const res = await fetch(TASK_CHECK_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-Init-Data': tg ? tg.initData : ''
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error('HTTP error ' + res.status);
+
             const data = await res.json();
-            // Ожидаемый формат:
-            // { you: { username, score, rank, total }, top: [ { username, score }, ... ] }
-            leaderboardData = data;
-            updateYouCard();
-            updateLeaderboardUI();
-        } catch (e) {
-            console.warn("Leaderboard sync error:", e);
-            // Если сервер не отвечает — просто используем локальный стейт без ошибок
+            if (data.ok && !task.rewarded) {
+                task.status = 'completed';
+                task.rewarded = true;
+                // выдать награду в виде V-монет (или просто звёзд в боте)
+                const reward = Number(task.reward) || 0;
+                balance += reward;
+                updateBalanceUI(reward);
+            } else if (data.alreadyCompleted) {
+                task.status = 'completed';
+            }
+        } catch (err) {
+            console.warn('Task check failed, используем фейковый успех для демо', err);
+            // DEMO: имитация успеха
+            if (!task.rewarded) {
+                task.status = 'completed';
+                task.rewarded = true;
+                const reward = Number(task.reward) || 0;
+                balance += reward;
+                updateBalanceUI(reward);
+            } else {
+                task.status = 'completed';
+            }
+        } finally {
+            renderTasks();
         }
     }
 
-    // ---------- LEADERBOARD UI ----------
-    function updateYouCard() {
-        const youNameEl = document.getElementById("youName");
-        const youScoreEl = document.getElementById("youScore");
-        const youRankTextEl = document.getElementById("youRankText");
-        const youAvatarEl = document.getElementById("youAvatar");
+    // ==============================
+    // 10. Лидерборд (реальный через сервер)
+    // ==============================
+    async function loadLeaderboard() {
+        lbListEl.innerHTML = '';
+        const loading = document.createElement('div');
+        loading.textContent = 'Загружаем топ…';
+        loading.style.fontSize = '11px';
+        loading.style.color = 'var(--text-soft)';
+        loading.style.textAlign = 'center';
+        loading.style.paddingTop = '8px';
+        lbListEl.appendChild(loading);
 
-        const tgUser = getTelegramUser();
-        const fallbackName = "Вы";
-        const rawName = tgUser
-            ? (tgUser.username || (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")))
-            : fallbackName;
+        try {
+            const res = await fetch(LEADERBOARD_API, {
+                method: 'GET',
+                headers: {
+                    'X-Telegram-Init-Data': tg ? tg.initData : ''
+                }
+            });
 
-        const usernameForDisplay = tgUser
-            ? ("@" + (tgUser.username || rawName))
-            : fallbackName;
+            if (!res.ok) throw new Error('HTTP error ' + res.status);
+            const data = await res.json();
 
-        const initials = initialsFromName(rawName);
+            // ожидаемый формат:
+            // {
+            //   "you": { "rank": 7, "score": 1200 },
+            //   "top": [
+            //      { "rank": 1, "name": "User", "score": 5000 },
+            //      ...
+            //   ]
+            // }
 
-        if (youNameEl) youNameEl.textContent = usernameForDisplay;
-        if (youScoreEl) youScoreEl.textContent = formatPoints(appState.balance) + " ★";
+            const you = (data && data.you) || { rank: '-', score: balance };
+            const top = (data && data.top) || [];
 
-        if (youAvatarEl) {
-            youAvatarEl.innerHTML = "";
-            const inner = document.createElement("div");
-            inner.className = "avatar-inner";
-            inner.textContent = initials;
-            youAvatarEl.appendChild(inner);
-        }
+            lbUserRankEl.textContent = you.rank || '-';
+            lbUserScoreEl.innerHTML = `${you.score ?? 0}<span> V</span>`;
 
-        if (leaderboardData && leaderboardData.you) {
-            const y = leaderboardData.you;
-            const rank = y.rank ?? "—";
-            const total = y.total ?? "—";
-            if (youRankTextEl) youRankTextEl.textContent = `Место — #${rank} из ${total}`;
-        } else {
-            if (youRankTextEl) youRankTextEl.textContent = "Место — —";
-        }
-    }
+            lbListEl.innerHTML = '';
+            top.forEach(entry => {
+                const row = document.createElement('div');
+                row.className = 'lb-row';
 
-    function updateLeaderboardUI() {
-        const container = document.getElementById("leaderList");
-        if (!container) return;
-        container.innerHTML = "";
+                if (you.rank && entry.rank === you.rank) {
+                    row.classList.add('you');
+                }
 
-        let list = [];
-        if (leaderboardData && Array.isArray(leaderboardData.top)) {
-            list = leaderboardData.top;
-        } else {
-            // запасной локальный вариант, если сервера нет
-            const tgUser = getTelegramUser();
-            const fallbackName = "Вы";
-            const rawName = tgUser
-                ? (tgUser.username || (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")))
-                : fallbackName;
+                const rank = document.createElement('div');
+                rank.className = 'lb-row-rank';
+                rank.textContent = entry.rank ?? '-';
 
-            const staticPlayers = [
-                { username: "aaqxn", score: 57600 },
-                { username: "muveonton", score: 50800 },
-                { username: "michael_sailor", score: 45700 },
-                { username: "theflipper", score: 24200 },
-                { username: "usluip", score: 20200 },
-                { username: "meteora_fa", score: 20100 },
-                { username: "denis33371", score: 18400 },
-                { username: "crypto_whale", score: 15200 },
-                { username: "tap_master", score: 11600 }
+                const name = document.createElement('div');
+                name.className = 'lb-row-name';
+                name.textContent = entry.name || 'Unknown';
+
+                const score = document.createElement('div');
+                score.className = 'lb-row-score';
+                score.innerHTML = `${entry.score ?? 0}<span> V</span>`;
+
+                row.appendChild(rank);
+                row.appendChild(name);
+                row.appendChild(score);
+
+                lbListEl.appendChild(row);
+            });
+
+            if (!top.length) {
+                const empty = document.createElement('div');
+                empty.style.fontSize = '11px';
+                empty.style.color = 'var(--text-soft)';
+                empty.style.textAlign = 'center';
+                empty.style.paddingTop = '8px';
+                empty.textContent = 'Пока в топе никого нет. Будь первым!';
+                lbListEl.appendChild(empty);
+            }
+        } catch (err) {
+            console.warn('Leaderboard load failed, показываем демо данные', err);
+            lbListEl.innerHTML = '';
+
+            // DEMO: фейковые данные
+            const demo = [
+                { rank: 1, name: 'GlassLord', score: 4200 },
+                { rank: 2, name: 'TapWizard', score: 3800 },
+                { rank: 3, name: 'BlueGhost', score: 3500 },
+                { rank: 4, name: 'NightShift', score: 3100 },
+                { rank: 5, name: 'MoonTapper', score: 2700 },
+                { rank: 6, name: 'SnowCoin', score: 2300 },
+                { rank: 7, name: 'You', score: balance }
             ];
 
-            const players = staticPlayers.map(p => ({ ...p }));
-            players.push({ username: rawName, score: appState.balance });
-            players.sort((a, b) => b.score - a.score);
-            list = players.slice(0, 10);
-        }
+            lbUserRankEl.textContent = '7';
+            lbUserScoreEl.innerHTML = `${balance}<span> V</span>`;
 
-        const tgUser = getTelegramUser();
-        const currentName = tgUser
-            ? (tgUser.username || (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")))
-            : "Вы";
-
-        list.forEach((p, idx) => {
-            const row = document.createElement("div");
-            const isMe = p.is_you === true || (p.username === currentName);
-            row.className = "leader-row" + (isMe ? " me" : "");
-
-            const rank = document.createElement("div");
-            rank.className = "leader-rank";
-            rank.textContent = idx + 1;
-
-            const avatar = document.createElement("div");
-            avatar.className = "avatar small";
-            const avatarInner = document.createElement("div");
-            avatarInner.className = "avatar-inner";
-            avatarInner.textContent = initialsFromName(p.username || ("#" + (idx + 1)));
-            avatar.appendChild(avatarInner);
-
-            const body = document.createElement("div");
-            body.className = "leader-body";
-
-            const uname = document.createElement("div");
-            uname.className = "leader-name";
-            uname.textContent = p.username || ("Игрок " + (idx + 1));
-
-            const score = document.createElement("div");
-            score.className = "leader-score";
-            const valNum = Number(p.score || 0);
-            const val = valNum >= 1000 ? (valNum / 1000).toFixed(1) + "k" : formatPoints(valNum);
-            score.textContent = val + " ★";
-
-            body.appendChild(uname);
-            body.appendChild(score);
-
-            const prize = document.createElement("div");
-            prize.className = "leader-prize";
-            const prizeInner = document.createElement("div");
-            prizeInner.className = "leader-prize-inner";
-            // ТУТ ТЫ ВСТАВИШЬ СВОИ ПРИЗЫ (ИКОНКИ/PNG)
-            prize.appendChild(prizeInner);
-
-            row.appendChild(rank);
-            row.appendChild(avatar);
-            row.appendChild(body);
-            row.appendChild(prize);
-
-            container.appendChild(row);
-        });
-    }
-
-    // ---------- UPGRADES ----------
-    function getUpgradePrice(level) {
-        return 10 * Math.pow(level + 1, 2);
-    }
-
-    function refreshUpgradesUI() {
-        const btn = document.getElementById("upgradeButton");
-        const levelLabel = document.getElementById("upgradeLevelLabel");
-        const priceLabel = document.getElementById("upgradePriceLabel");
-
-        if (!btn || !levelLabel || !priceLabel) return;
-
-        const price = getUpgradePrice(appState.multiplierLevel);
-        levelLabel.textContent = appState.multiplierLevel;
-        priceLabel.textContent = formatPoints(price);
-
-        if (appState.balance >= price) {
-            btn.classList.remove("disabled");
-            btn.disabled = false;
-        } else {
-            btn.classList.add("disabled");
-            btn.disabled = false; // пусть нажимает, покажем тост
-        }
-
-        refreshBalanceUI();
-    }
-
-    (function setupUpgradeButton() {
-        const btn = document.getElementById("upgradeButton");
-        if (!btn) return;
-        btn.addEventListener("click", () => {
-            const price = getUpgradePrice(appState.multiplierLevel);
-            if (appState.balance < price) {
-                showToast("Недостаточно очков для апгрейда.");
-                return;
-            }
-            appState.balance -= price;
-            appState.multiplierLevel += 1;
-            saveState();
-            showToast("Мультипликатор повышен! Теперь +" + (getMultiplier() - 1).toFixed(1) + " к базовому значению.");
-            refreshUpgradesUI();
-            updateYouCard();
-            updateLeaderboardUI();
-        });
-    })();
-
-    // ---------- NAVIGATION ----------
-    (function setupNavigation() {
-        const tabs = document.querySelectorAll(".nav-item");
-        const highlight = document.getElementById("navHighlight");
-        const navInner = document.getElementById("navInner");
-
-        function updateHighlight() {
-            const active = document.querySelector(".nav-item.active");
-            if (!active || !highlight || !navInner) return;
-            const rect = active.getBoundingClientRect();
-            const parentRect = navInner.getBoundingClientRect();
-            const width = rect.width;
-            const offset = rect.left - parentRect.left;
-            highlight.style.width = width + "px";
-            highlight.style.transform = "translateX(" + offset + "px)";
-        }
-
-        function switchTab(tabId) {
-            activeTab = tabId;
-
-            document.querySelectorAll(".tab-page").forEach(page => {
-                page.classList.toggle("active", page.id === "tab-" + tabId);
-            });
-
-            tabs.forEach(item => {
-                item.classList.toggle("active", item.dataset.tab === tabId);
-            });
-
-            updateHighlight();
-
-            if (tabId === "leaderboard") {
-                updateYouCard();
-                updateLeaderboardUI();
-                scheduleLeaderboardSync();
-            }
-            if (tabId === "tasks") {
-                renderTasks();
-            }
-            if (tabId === "upgrades") {
-                refreshUpgradesUI();
-            }
-            if (tabId === "home") {
-                refreshBalanceUI();
-            }
-        }
-
-        tabs.forEach(item => {
-            item.addEventListener("click", () => {
-                const tabId = item.dataset.tab;
-                if (tabId !== activeTab) {
-                    switchTab(tabId);
-                }
-            });
-        });
-
-        window.addEventListener("resize", updateHighlight);
-        setTimeout(updateHighlight, 60);
-    })();
-
-    // ---------- SNOW (iOS Weather "Snowfall" style) ----------
-    (function setupSnow() {
-        const canvas = document.getElementById("snowCanvas");
-        const ctx = canvas.getContext("2d");
-
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-
-        window.addEventListener("resize", () => {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        });
-
-        const flakes = [];
-        const FLAKE_COUNT = 90;
-
-        function initFlakes() {
-            flakes.length = 0;
-            for (let i = 0; i < FLAKE_COUNT; i++) {
-                flakes.push(createFlake(true));
-            }
-        }
-
-        function createFlake(initial) {
-            return {
-                x: Math.random() * width,
-                y: initial ? Math.random() * height : -10,
-                r: 0.5 + Math.random() * 2.2,
-                speedY: 0.3 + Math.random() * 0.9,
-                driftX: -0.15 + Math.random() * 0.3,
-                driftPhase: Math.random() * Math.PI * 2,
-                alpha: 0.35 + Math.random() * 0.4
-            };
-        }
-
-        function update() {
-            ctx.clearRect(0, 0, width, height);
-
-            ctx.save();
-            ctx.fillStyle = "#fff";
-            for (let i = 0; i < flakes.length; i++) {
-                const f = flakes[i];
-                f.y += f.speedY;
-                f.driftPhase += 0.01 + Math.random() * 0.01;
-                f.x += f.driftX + Math.sin(f.driftPhase) * 0.1;
-
-                if (f.y > height + 5 || f.x < -10 || f.x > width + 10) {
-                    flakes[i] = createFlake(false);
+            demo.forEach(entry => {
+                const row = document.createElement('div');
+                row.className = 'lb-row';
+                if (entry.name === 'You') {
+                    row.classList.add('you');
                 }
 
-                ctx.globalAlpha = f.alpha;
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.restore();
+                const rank = document.createElement('div');
+                rank.className = 'lb-row-rank';
+                rank.textContent = entry.rank;
 
-            requestAnimationFrame(update);
+                const name = document.createElement('div');
+                name.className = 'lb-row-name';
+                name.textContent = entry.name;
+
+                const score = document.createElement('div');
+                score.className = 'lb-row-score';
+                score.innerHTML = `${entry.score}<span> V</span>`;
+
+                row.appendChild(rank);
+                row.appendChild(name);
+                row.appendChild(score);
+
+                lbListEl.appendChild(row);
+            });
+        }
+    }
+
+    refreshLeaderboardBtn.addEventListener('click', loadLeaderboard);
+
+    // ==============================
+    // 11. Апгрейды + openInvoice
+    // ==============================
+    function renderUpgrades() {
+        upgradesListEl.innerHTML = '';
+
+        upgrades.forEach(upg => {
+            const item = document.createElement('div');
+            item.className = 'upgrade-item';
+            if (upg.unlocked) {
+                item.classList.add('unlocked');
+            }
+
+            const top = document.createElement('div');
+            top.className = 'upgrade-top';
+
+            const title = document.createElement('div');
+            title.className = 'upgrade-title';
+            title.textContent = upg.title;
+
+            const badge = document.createElement('div');
+            badge.className = 'upgrade-badge';
+            badge.textContent = upg.levelLabel || 'Boost';
+
+            top.appendChild(title);
+            top.appendChild(badge);
+
+            const desc = document.createElement('div');
+            desc.className = 'upgrade-desc';
+            desc.textContent = upg.description;
+
+            const bottom = document.createElement('div');
+            bottom.className = 'upgrade-bottom';
+
+            const price = document.createElement('div');
+            price.className = 'upgrade-price';
+            price.innerHTML = `${upg.priceStars} ★<span> через openInvoice</span>`;
+
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-danger';
+            btn.textContent = upg.unlocked ? 'Куплено' : 'Купить за звёзды';
+
+            if (upg.unlocked) {
+                btn.disabled = true;
+            }
+
+            btn.addEventListener('click', () => {
+                if (upg.unlocked) return;
+                openUpgradeInvoice(upg);
+            });
+
+            bottom.appendChild(price);
+            bottom.appendChild(btn);
+
+            item.appendChild(top);
+            item.appendChild(desc);
+            item.appendChild(bottom);
+
+            upgradesListEl.appendChild(item);
+        });
+    }
+
+    function applyUpgradeEffect(upgradeId) {
+        const upg = upgrades.find(u => u.id === upgradeId);
+        if (!upg) return;
+
+        if (upgradeId === 'tap_x2') {
+            tapMultiplier *= 2;
+        } else if (upgradeId === 'tap_x3') {
+            tapMultiplier *= 3;
+        } else if (upgradeId === 'auto_miner') {
+            // пример: каждые 60 сек добавлять 10 V
+            setInterval(() => {
+                const gain = 10;
+                balance += gain;
+                updateBalanceUI(gain);
+            }, 60000);
+        }
+        updateTapInfoUI();
+    }
+
+    async function openUpgradeInvoice(upg) {
+        if (!tg) {
+            alert('openInvoice работает только внутри Telegram Mini App.');
+            return;
         }
 
-        initFlakes();
-        requestAnimationFrame(update);
-    })();
+        // Обычно инвойс создаётся ботом. Здесь мы просто открываем ссылку,
+        // в которой твой бот по start-param понимает, какой апгрейд покупать.
+        const url = `${INVOICE_BASE_URL}_${encodeURIComponent(upg.id)}`;
 
-    // ---------- INIT ----------
-    function init() {
-        try {
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
+        tg.openInvoice(url, async (status) => {
+            // Возможные статусы: "paid", "failed", "pending", "cancelled"
+            if (status === 'paid') {
+                try {
+                    // Уведомляем сервер, что апгрейд куплен
+                    await fetch(UPGRADE_APPLY_API, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Telegram-Init-Data': tg.initData
+                        },
+                        body: JSON.stringify({ upgrade_id: upg.id })
+                    });
+                } catch (e) {
+                    console.warn('Не удалось отправить апгрейд на сервер, но локально засчитываем', e);
+                }
+
+                upg.unlocked = true;
+                applyUpgradeEffect(upg.id);
+                renderUpgrades();
+
+                tg.showPopup({
+                    title: 'Апгрейд активирован',
+                    message: `${upg.title} теперь работает!`,
+                    buttons: [{ id: 'ok', type: 'default', text: 'Ок' }]
+                });
+            } else if (status === 'failed') {
+                tg.showPopup({
+                    title: 'Ошибка оплаты',
+                    message: 'Не удалось оплатить инвойс. Попробуй ещё раз.',
+                    buttons: [{ id: 'ok', type: 'close', text: 'Понятно' }]
+                });
             }
-        } catch (e) {}
+        });
+    }
 
-        refreshBalanceUI();
+    // ==============================
+    // 12. Старт приложения
+    // ==============================
+    function initApp() {
+        initUserInfo();
+        updateBalanceUI(0);
+        updateTapInfoUI();
         renderTasks();
-        updateYouCard();
-        updateLeaderboardUI();
-        refreshUpgradesUI();
-        scheduleLeaderboardSync();
+        renderUpgrades();
+        loadLeaderboard();
     }
 
-    init();
+    document.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
