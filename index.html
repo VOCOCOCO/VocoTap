@@ -2,11 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Tap Coin Mini App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Tap Glass</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- GSAP для анимаций вкладок и бегунка -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- particles.js для снега -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
     <style>
         :root {
@@ -16,16 +21,16 @@
             --accent-soft: #9fd1ff;
             --accent-deep: #1f68ff;
 
-            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.06);
             --glass-stroke: rgba(255, 255, 255, 0.18);
-            --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+            --glass-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
 
             --text-main: #f5f5ff;
             --text-soft: #b3b9d9;
             --text-muted: #7b809c;
 
             --danger: #ff4b6a;
-            --success: #4ce1a1;
+            --success: #32d77c;
 
             --radius-lg: 24px;
             --radius-md: 18px;
@@ -50,56 +55,52 @@
             overflow: hidden;
         }
 
+        /* Снег позади всего */
+        #snow {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
         .app-root {
+            position: relative;
+            z-index: 1;
             height: 100vh;
             max-width: 480px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            padding: 12px 12px 20px;
-            position: relative;
+            padding: 10px 12px 20px;
         }
 
+        /* HEADER — минимализм */
         .app-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 10px 14px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, rgba(95,168,255,0.25), rgba(15,20,45,0.85));
-            border: 1px solid rgba(148, 204, 255, 0.4);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.8);
-            backdrop-filter: blur(28px);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 999px;
+            background: radial-gradient(circle at top left,
+            rgba(255,255,255,0.16), rgba(5,6,22,0.9));
+            border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
         }
 
         .app-header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .app-logo {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
-            box-shadow: 0 0 24px rgba(95,168,255,0.9);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .app-logo::after {
-            content: "V";
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 18px;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 0 12px rgba(0,0,0,0.8);
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            border: 1px solid rgba(255,255,255,0.5);
         }
 
         .app-title-block {
@@ -108,9 +109,9 @@
         }
 
         .app-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.08em;
         }
 
         .app-subtitle {
@@ -124,16 +125,29 @@
             gap: 8px;
         }
 
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
         .pill {
-            padding: 5px 9px;
+            padding: 4px 9px;
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.22);
-            background: radial-gradient(circle at 0 0, rgba(255,255,255,0.35), rgba(30,40,80,0.7));
-            font-size: 11px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: radial-gradient(circle at 0 0,
+            rgba(255,255,255,0.25), rgba(13,16,36,0.9));
+            font-size: 10px;
             color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .pill-dot {
@@ -141,41 +155,32 @@
             height: 6px;
             border-radius: 999px;
             background: var(--success);
-            box-shadow: 0 0 6px rgba(76,225,161,0.9);
         }
 
-        .pill-label {
-            opacity: 0.8;
-        }
-
-        /* MAIN CONTENT AREA */
+        /* CONTENT */
         .app-content {
             flex: 1;
             position: relative;
-            margin-top: 6px;
-            margin-bottom: 16px;
+            margin: 4px 0 14px;
             overflow: hidden;
         }
 
         .screen {
             position: absolute;
             inset: 0;
-            padding: 8px 2px 6px;
+            padding: 6px 4px 4px;
             opacity: 0;
             pointer-events: none;
-            transform: translateX(8px);
-            transition: opacity 0.18s ease-out, transform 0.18s ease-out;
         }
 
         .screen.active {
             opacity: 1;
             pointer-events: auto;
-            transform: translateX(0);
         }
 
-        /* GLASS CARD */
         .glass-card {
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+            background: radial-gradient(circle at top left,
+            rgba(255,255,255,0.18), rgba(255,255,255,0.03));
             background-color: var(--glass-bg);
             border-radius: var(--radius-lg);
             border: 1px solid var(--glass-stroke);
@@ -184,114 +189,37 @@
             -webkit-backdrop-filter: blur(26px);
         }
 
-        .glass-section {
-            padding: 14px 16px;
-            margin-bottom: 10px;
-        }
-
-        .glass-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-        }
-
-        .section-subtitle {
-            font-size: 11px;
-            color: var(--text-soft);
-        }
-
-        /* HOME SCREEN */
-        .balance-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .balance-main {
+        /* HOME — как W-Coin: большая монета по центру */
+        .home-wrapper {
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-        }
-
-        .balance-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--text-muted);
-        }
-
-        .balance-value {
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-
-        .balance-value span:nth-child(2) {
-            font-size: 14px;
-            color: var(--accent-soft);
-            opacity: 0.9;
-        }
-
-        .balance-change {
-            font-size: 11px;
-            color: var(--accent-soft);
-            opacity: 0.8;
-        }
-
-        .per-tap-pill {
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.22);
-            background: linear-gradient(135deg, rgba(95,168,255,0.3), rgba(15,20,45,0.8));
-            font-size: 11px;
-            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            gap: 18px;
         }
 
-        .per-tap-pill-icon {
-            width: 14px;
-            height: 14px;
-            border-radius: 7px;
-            background: radial-gradient(circle at 30% 20%, #ffffff, #9fd1ff 45%, #1f68ff 90%);
-            box-shadow: 0 0 10px rgba(95,168,255,0.9);
-        }
-
-        .tap-analytics {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            font-size: 11px;
+        .home-balance-label {
+            font-size: 12px;
             color: var(--text-soft);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
-        .tap-analytics span strong {
-            color: var(--text-main);
+        .home-balance-value {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
         }
 
-        .coin-zone {
-            margin-top: 10px;
-            padding: 16px 12px 18px;
+        .home-balance {
             text-align: center;
         }
 
         .coin-wrapper {
             position: relative;
-            width: 190px;
-            height: 190px;
-            margin: 0 auto 10px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -299,254 +227,279 @@
             cursor: pointer;
             -webkit-user-select: none;
             user-select: none;
-            transform: translateZ(0);
         }
 
         .coin-glow {
             position: absolute;
-            inset: 12px;
+            inset: 10px;
             border-radius: inherit;
-            background: radial-gradient(circle at 30% 0, rgba(159, 209, 255, 0.8), rgba(4, 8, 24, 0));
-            filter: blur(8px);
-            opacity: 0.85;
+            background: radial-gradient(circle at 30% 0,
+            rgba(159, 209, 255, 0.7), rgba(4, 8, 24, 0));
+            filter: blur(6px);
+            opacity: 0.75;
         }
 
         .coin-plate {
             position: relative;
             inset: 0;
             border-radius: inherit;
-            background:
-                radial-gradient(circle at 30% 30%, #e6f3ff, #9fd1ff 35%, #1f68ff 60%, #040818 95%);
-            box-shadow:
-                0 0 50px rgba(104, 179, 255, 0.7),
-                0 18px 45px rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(255,255,255,0.35);
-            transform: perspective(700px) rotateX(13deg) rotateY(-12deg);
             overflow: hidden;
-        }
-
-        .coin-highlight-ring {
-            position: absolute;
-            inset: 10%;
-            border-radius: inherit;
-            border: 1px solid rgba(255,255,255,0.53);
-            opacity: 0.7;
+            box-shadow:
+                    0 0 34px rgba(104, 179, 255, 0.55),
+                    0 18px 40px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255,255,255,0.35);
+            transform: perspective(700px) rotateX(12deg) rotateY(-10deg);
+            background: radial-gradient(circle at 30% 30%,
+            #e6f3ff, #9fd1ff 35%, #1f68ff 60%, #040818 95%);
         }
 
         .coin-inner {
             position: absolute;
-            inset: 25%;
+            inset: 23%;
             border-radius: inherit;
-            background: radial-gradient(circle at 30% 20%, #f6fbff, #bfdcff 50%, #2659d8 100%);
+            background: radial-gradient(circle at 30% 20%,
+            #f6fbff, #bfdcff 50%, #2659d8 100%);
             border: 1px solid rgba(255,255,255,0.7);
-            box-shadow: inset 0 0 18px rgba(0,0,0,0.35);
+            box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
+        }
+
+        .coin-highlight-ring {
+            position: absolute;
+            inset: 9%;
+            border-radius: inherit;
+            border: 1px solid rgba(255,255,255,0.5);
+            opacity: 0.7;
         }
 
         .coin-letter {
             position: absolute;
-            inset: 28%;
+            inset: 27%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 70px;
+            font-size: 74px;
             color: rgba(6, 20, 60, 0.9);
             text-shadow:
-                0 1px 0 rgba(255,255,255,0.7),
-                0 -2px 3px rgba(0,0,0,0.55),
-                0 0 26px rgba(255,255,255,0.7);
+                    0 1px 0 rgba(255,255,255,0.7),
+                    0 -2px 3px rgba(0,0,0,0.55),
+                    0 0 24px rgba(255,255,255,0.6);
         }
 
         .coin-glare {
             position: absolute;
             top: -15%;
-            left: -15%;
+            left: -12%;
             width: 70%;
             height: 45%;
             border-radius: 60%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.75), transparent 60%);
+            background: linear-gradient(135deg,
+            rgba(255,255,255,0.8), transparent 60%);
             filter: blur(8px);
             opacity: 0.8;
         }
 
         .coin-wrapper:active .coin-plate {
-            transform: perspective(700px) rotateX(17deg) rotateY(-6deg) scale(0.97);
+            transform: perspective(700px) rotateX(16deg) rotateY(-6deg) scale(0.97);
             box-shadow:
-                0 0 40px rgba(104, 179, 255, 0.65),
-                0 12px 30px rgba(0, 0, 0, 0.9);
+                    0 0 28px rgba(104, 179, 255, 0.50),
+                    0 12px 30px rgba(0, 0, 0, 0.9);
         }
 
         .coin-wrapper.tap-anim .coin-plate {
-            animation: pulse 0.19s ease-out;
+            animation: pulse 0.18s ease-out;
         }
 
         @keyframes pulse {
-            0% { transform: perspective(700px) rotateX(13deg) rotateY(-12deg) scale(1); }
-            50% { transform: perspective(700px) rotateX(16deg) rotateY(-9deg) scale(0.96); }
-            100% { transform: perspective(700px) rotateX(13deg) rotateY(-12deg) scale(1); }
+            0%   { transform: perspective(700px) rotateX(12deg) rotateY(-10deg) scale(1); }
+            50%  { transform: perspective(700px) rotateX(16deg) rotateY(-7deg) scale(0.96); }
+            100% { transform: perspective(700px) rotateX(12deg) rotateY(-10deg) scale(1); }
         }
 
-        .tap-hint {
+        .home-note {
             font-size: 12px;
             color: var(--text-soft);
-            margin-bottom: 4px;
-        }
-
-        .tap-gain {
-            font-size: 13px;
-            color: var(--accent-soft);
-        }
-
-        .tap-gain span {
-            font-weight: 600;
-            color: #ffffff;
         }
 
         .tap-float {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -10px);
             font-size: 14px;
             font-weight: 600;
             color: #ffffff;
             text-shadow: 0 0 8px rgba(0,0,0,0.7);
-            opacity: 0;
             pointer-events: none;
+            opacity: 0;
         }
 
-        .tap-float.show {
-            animation: floatUp 0.4s ease-out forwards;
+        /* TASKS */
+        .tasks-hero {
+            margin-bottom: 10px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            height: 110px;
+            background: radial-gradient(circle at top left,
+            #1f68ff, #001334 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
-        @keyframes floatUp {
-            0%   { opacity: 1; transform: translate(-50%, -6px); }
-            100% { opacity: 0; transform: translate(-50%, -32px); }
+        .tasks-card {
+            padding: 12px 12px 10px;
         }
 
-        /* TASKS SCREEN */
+        .tasks-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
         .tasks-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: 4px;
         }
 
-        .task-item {
-            padding: 10px 12px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.2);
-            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(20,30,70,0.85));
+        .task-row {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 18px;
+            background: rgba(4,5,16,0.92);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .task-top {
+        .task-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 14px;
+            margin-right: 8px;
             display: flex;
-            justify-content: space-between;
-            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #cbe6ff 40%, #1554ff 80%);
+        }
+
+        .task-main {
+            flex: 1;
+            min-width: 0;
         }
 
         .task-title {
             font-size: 13px;
             font-weight: 500;
-        }
-
-        .task-reward {
-            font-size: 11px;
-            color: var(--accent-soft);
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .task-desc {
+        .task-bonus {
             font-size: 11px;
-            color: var(--text-soft);
+            margin-top: 2px;
+            color: #ffd664;
+            font-weight: 500;
         }
 
-        .task-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+        .task-action {
+            margin-left: 10px;
         }
 
-        .task-status {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .task-status-dot {
-            width: 7px;
-            height: 7px;
+        .task-btn {
             border-radius: 999px;
-            background: var(--accent-soft);
-        }
-
-        .task-status.completed .task-status-dot {
-            background: var(--success);
-        }
-
-        .task-status.completed span {
-            color: var(--success);
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn {
-            border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.32);
-            padding: 6px 10px;
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 6px 12px;
             font-size: 11px;
             font-weight: 500;
-            background: linear-gradient(135deg, rgba(95,168,255,0.65), rgba(10,15,35,0.9));
+            background: linear-gradient(135deg,
+            rgba(95,168,255,0.7), rgba(9,14,34,0.95));
             color: #ffffff;
             cursor: pointer;
             outline: none;
         }
 
-        .btn.secondary {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(8,12,30,0.9));
-            color: var(--text-soft);
-        }
-
-        .btn:active {
+        .task-btn:active {
             transform: scale(0.97);
         }
 
-        .btn[disabled] {
-            opacity: 0.4;
-            cursor: default;
-            transform: none;
+        .task-pill-done {
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #0f772f;
+            color: #ffffff;
+            border: 1px solid rgba(0,0,0,0.4);
         }
 
-        /* LEADERBOARD SCREEN */
-        .lb-user-card,
-        .lb-list {
-            margin-top: 6px;
+        /* LEADERBOARD */
+        .lb-card {
+            padding: 12px 12px 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
+
+        .lb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .lb-title-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lb-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .lb-subtitle {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            background: linear-gradient(135deg,
+            rgba(255,255,255,0.08), rgba(8,12,30,0.9));
+            color: var(--text-soft);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn:active { transform: scale(0.97); }
 
         .lb-user-card {
-            padding: 11px 13px;
+            padding: 10px 11px;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.28);
-            background: linear-gradient(135deg, rgba(95,168,255,0.35), rgba(15,20,45,0.9));
+            border: 1px solid rgba(255,255,255,0.24);
+            background: radial-gradient(circle at top left,
+            rgba(95,168,255,0.25), rgba(15,20,45,0.95));
             display: flex;
             align-items: center;
-            gap: 11px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .lb-rank-circle {
             width: 26px;
             height: 26px;
             border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -555,10 +508,11 @@
         }
 
         .lb-avatar {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
             overflow: hidden;
             flex-shrink: 0;
         }
@@ -596,44 +550,33 @@
         }
 
         .lb-list {
-            max-height: calc(100% - 110px);
+            flex: 1;
+            margin-top: 4px;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 3px;
         }
 
         .lb-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             padding: 7px 6px;
             border-radius: var(--radius-sm);
-            border: 1px solid rgba(255,255,255,0.1);
-            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(8,12,30,0.9));
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg,
+            rgba(255,255,255,0.03), rgba(7,10,26,0.95));
             font-size: 11px;
         }
 
-        .lb-row-rank {
-            width: 24px;
-            text-align: center;
-            color: var(--text-soft);
-        }
-
-        .lb-row-name {
-            flex: 1;
-        }
-
-        .lb-row-score {
-            font-weight: 500;
-        }
-
-        .lb-row-score span {
-            font-size: 10px;
-            color: var(--accent-soft);
-        }
+        .lb-row-rank { width: 22px; text-align: center; color: var(--text-soft); }
+        .lb-row-name { flex: 1; }
+        .lb-row-score { font-weight: 500; }
+        .lb-row-score span { font-size: 10px; color: var(--accent-soft); }
 
         .lb-row.you {
             border-color: rgba(159,209,255,0.7);
-            background: linear-gradient(135deg, rgba(95,168,255,0.16), rgba(15,20,45,0.95));
+            background: linear-gradient(135deg,
+            rgba(95,168,255,0.16), rgba(15,20,45,0.95));
         }
 
         .lb-footer-note {
@@ -643,42 +586,67 @@
             text-align: center;
         }
 
-        /* UPGRADES SCREEN */
-        .upgrades-info {
+        /* UPGRADES */
+        .up-card {
+            padding: 12px 12px 10px;
+        }
+
+        .up-header {
+            margin-bottom: 6px;
+        }
+
+        .up-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .up-subtitle {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .up-info {
             font-size: 11px;
             color: var(--text-soft);
             margin-top: 4px;
         }
 
-        .upgrades-list {
+        .up-list {
             margin-top: 8px;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .upgrade-item {
+        .up-item {
             padding: 10px 12px;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.22);
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(14,20,46,0.9));
+            border: 1px solid rgba(255,255,255,0.2);
+            background: linear-gradient(135deg,
+            rgba(255,255,255,0.08), rgba(8,12,30,0.95));
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .upgrade-top {
+        .up-item.unlocked {
+            border-color: rgba(50,215,124,0.7);
+            background: linear-gradient(135deg,
+            rgba(50,215,124,0.18), rgba(5,18,18,0.98));
+        }
+
+        .up-top {
             display: flex;
             justify-content: space-between;
             gap: 8px;
         }
 
-        .upgrade-title {
+        .up-name {
             font-size: 13px;
             font-weight: 500;
         }
 
-        .upgrade-badge {
+        .up-badge {
             padding: 2px 7px;
             border-radius: 999px;
             border: 1px solid rgba(255,255,255,0.3);
@@ -686,50 +654,48 @@
             color: var(--accent-soft);
         }
 
-        .upgrade-desc {
+        .up-item.unlocked .up-badge {
+            color: var(--success);
+            border-color: rgba(50,215,124,0.9);
+        }
+
+        .up-desc {
             font-size: 11px;
             color: var(--text-soft);
         }
 
-        .upgrade-bottom {
+        .up-bottom {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .upgrade-price {
+        .up-price {
             font-size: 12px;
             color: var(--accent-soft);
         }
 
-        .upgrade-price span {
+        .up-price span {
             font-size: 11px;
             color: var(--text-muted);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, rgba(255,75,106,0.9), rgba(150,20,60,0.95));
+            background: linear-gradient(135deg,
+            rgba(255,75,106,0.9), rgba(150,20,60,0.95));
+            color: #ffffff;
         }
 
-        .upgrade-item.unlocked {
-            border-color: rgba(76,225,161,0.7);
-            background: linear-gradient(135deg, rgba(76,225,161,0.18), rgba(6,18,28,0.95));
-        }
-
-        .upgrade-item.unlocked .upgrade-badge {
-            color: var(--success);
-            border-color: rgba(76,225,161,0.8);
-        }
-
-        .upgrade-item.unlocked .upgrade-price {
-            color: var(--success);
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: default;
+            transform: none;
         }
 
         /* BOTTOM NAV */
         .bottom-nav-wrap {
-            position: relative;
-            padding: 10px 16px 12px;
+            padding: 8px 14px 4px;
         }
 
         .bottom-nav {
@@ -737,27 +703,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
-            padding: 8px 10px;
+            gap: 4px;
+            padding: 7px 9px;
             border-radius: 999px;
-            background: radial-gradient(circle at top, rgba(255,255,255,0.22), rgba(10,10,30,0.95));
-            background-color: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.28);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.9);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
+            background: radial-gradient(circle at top,
+            rgba(255,255,255,0.18), rgba(8,8,24,0.95));
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
 
         .nav-indicator {
             position: absolute;
-            top: 5px;
-            bottom: 5px;
+            top: 4px;
+            bottom: 4px;
             width: 24%;
             border-radius: 999px;
-            background: linear-gradient(135deg, rgba(95,168,255,0.45), rgba(8,10,32,0.98));
-            box-shadow: 0 10px 25px rgba(95,168,255,0.6);
-            transform: translateX(0%);
-            transition: transform 0.18s ease-out;
+            background: linear-gradient(135deg,
+            rgba(95,168,255,0.35), rgba(6,10,32,0.98));
+            box-shadow: 0 8px 20px rgba(95,168,255,0.5);
             z-index: 1;
         }
 
@@ -784,13 +748,13 @@
             display: block;
         }
 
-        .nav-btn.active {
-            color: #ffffff;
-        }
-
         .nav-btn span {
             letter-spacing: 0.08em;
             text-transform: uppercase;
+        }
+
+        .nav-btn.active {
+            color: #ffffff;
         }
 
         .nav-btn svg path {
@@ -801,41 +765,37 @@
             opacity: 1;
         }
 
-        /* SCROLLBARS */
-        .lb-list::-webkit-scrollbar {
-            width: 3px;
-        }
-
+        /* scrollbars */
+        .lb-list::-webkit-scrollbar { width: 3px; }
         .lb-list::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.26);
+            background: rgba(255,255,255,0.24);
             border-radius: 999px;
         }
 
-        /* SMALL SCREENS */
         @media (max-height: 640px) {
-            .coin-wrapper {
-                width: 170px;
-                height: 170px;
-            }
+            .coin-wrapper { width: 185px; height: 185px; }
         }
     </style>
 </head>
 <body>
+<div id="snow"></div>
+
 <div class="app-root">
     <!-- HEADER -->
     <header class="app-header">
         <div class="app-header-left">
             <div class="app-logo"></div>
             <div class="app-title-block">
-                <div class="app-title">Tap Glass</div>
+                <div class="app-title">V COIN</div>
                 <div class="app-subtitle" id="userLabel">Loading…</div>
             </div>
         </div>
         <div class="app-header-right">
             <div class="pill">
                 <div class="pill-dot"></div>
-                <div class="pill-label" id="sessionStat">Session 0 taps</div>
+                <div class="pill-label" id="sessionStat">0 taps</div>
             </div>
+            <div class="user-avatar" id="userAvatar"></div>
         </div>
     </header>
 
@@ -843,113 +803,81 @@
     <main class="app-content">
         <!-- HOME -->
         <section class="screen active" id="screen-home" data-tab="home">
-            <div class="glass-card glass-section">
-                <div class="glass-section-header">
-                    <div>
-                        <div class="section-title">Баланс</div>
-                        <div class="section-subtitle">Твои V-монеты</div>
-                    </div>
-                    <div class="per-tap-pill">
-                        <div class="per-tap-pill-icon"></div>
-                        <div><span id="perTapValue">+1</span> за тап</div>
-                    </div>
+            <div class="home-wrapper">
+                <div class="home-balance">
+                    <div class="home-balance-label">Ваш баланс</div>
+                    <div class="home-balance-value"><span id="balanceValue">0.0</span> pts</div>
                 </div>
-                <div class="balance-row">
-                    <div class="balance-main">
-                        <div class="balance-label">Всего</div>
-                        <div class="balance-value">
-                            <span id="balanceValue">0</span><span>V</span>
-                        </div>
-                        <div class="balance-change" id="balanceChange"></div>
-                    </div>
-                </div>
-                <div class="tap-analytics">
-                    <span>За сессию: <strong id="sessionTapsValue">0</strong> тапов</span>
-                    <span>Всего тапов: <strong id="totalTapsValue">0</strong></span>
-                </div>
-            </div>
 
-            <div class="glass-card coin-zone">
                 <div class="coin-wrapper" id="coin">
                     <div class="coin-glow"></div>
                     <div class="coin-plate">
+                        <!-- Сюда можно поставить свою PNG монеты -->
                         <div class="coin-highlight-ring"></div>
                         <div class="coin-inner"></div>
                         <div class="coin-letter">V</div>
                         <div class="coin-glare"></div>
                     </div>
-                    <div class="tap-float" id="tapFloat">+1</div>
                 </div>
-                <div class="tap-hint">Тапай по монете, чтобы зарабатывать V-монеты</div>
-                <div class="tap-gain">Текущий множитель: <span id="tapMultiplierLabel">x1</span></div>
+
+                <div class="home-note">
+                    Тапайте по монете, чтобы получать очки. Сейчас за тап: <span id="perTapLabel">+0.1</span>
+                </div>
             </div>
         </section>
 
         <!-- TASKS -->
         <section class="screen" id="screen-tasks" data-tab="tasks">
-            <div class="glass-card glass-section">
-                <div class="glass-section-header">
-                    <div>
-                        <div class="section-title">Задания</div>
-                        <div class="section-subtitle">Подписки и активности за звёзды</div>
-                    </div>
-                </div>
-                <div class="tasks-list" id="tasksList">
-                    <!-- JS заполнит -->
-                </div>
+            <div class="tasks-hero">
+                Tasks
+            </div>
+
+            <div class="glass-card tasks-card">
+                <div class="tasks-card-title">Tasks:</div>
+                <div class="tasks-list" id="tasksList"></div>
             </div>
         </section>
 
         <!-- LEADERBOARD -->
         <section class="screen" id="screen-leaderboard" data-tab="leaderboard">
-            <div class="glass-card glass-section" style="height: 100%; display: flex; flex-direction: column;">
-                <div class="glass-section-header">
-                    <div>
-                        <div class="section-title">Лидерборд</div>
-                        <div class="section-subtitle">Топ игроков по V-монетам</div>
+            <div class="glass-card lb-card">
+                <div class="lb-header">
+                    <div class="lb-title-block">
+                        <div class="lb-title">Лидерборд</div>
+                        <div class="lb-subtitle">Топ игроков по очкам</div>
                     </div>
-                    <button class="btn secondary" id="refreshLeaderboardBtn" style="padding-inline: 10px;">Обновить</button>
+                    <button class="btn" id="refreshLeaderboardBtn">Обновить</button>
                 </div>
 
-                <div class="lb-user-card" id="lbUserCard">
+                <div class="lb-user-card">
                     <div class="lb-rank-circle" id="lbUserRank">–</div>
-                    <div class="lb-avatar" id="lbUserAvatar">
-                        <!-- если есть фото, подставим img -->
-                    </div>
+                    <div class="lb-avatar" id="lbUserAvatar"></div>
                     <div class="lb-user-main">
                         <div class="lb-user-name" id="lbUserName">You</div>
                         <div class="lb-user-handle" id="lbUserHandle">@you</div>
                     </div>
-                    <div class="lb-user-score" id="lbUserScore">
-                        0<span> V</span>
-                    </div>
+                    <div class="lb-user-score" id="lbUserScore">0.0<span> pts</span></div>
                 </div>
 
-                <div class="lb-list" id="lbList">
-                    <!-- JS заполнит -->
-                </div>
-
+                <div class="lb-list" id="lbList"></div>
                 <div class="lb-footer-note">
-                    Данные берутся с сервера по initData. Обновляй, чтобы увидеть актуальный топ.
+                    Данные приходят с сервера по initData. Пока используется демо-режим.
                 </div>
             </div>
         </section>
 
         <!-- UPGRADES -->
         <section class="screen" id="screen-upgrades" data-tab="upgrades">
-            <div class="glass-card glass-section">
-                <div class="glass-section-header">
-                    <div>
-                        <div class="section-title">Апгрейды</div>
-                        <div class="section-subtitle">Усиления за Telegram Stars</div>
-                    </div>
+            <div class="glass-card up-card">
+                <div class="up-header">
+                    <div class="up-title">Апгрейды</div>
+                    <div class="up-subtitle">Увеличивай очки за тап через Stars</div>
                 </div>
-                <div class="upgrades-info">
-                    Покупай апгрейды за звёзды через <b>openInvoice</b>, чтобы увеличить доход с каждого тапа.
+                <div class="up-info">
+                    Покупка проходит через <b>openInvoice</b>. После успешной оплаты апгрейд сразу активируется.
                 </div>
-                <div class="upgrades-list" id="upgradesList">
-                    <!-- JS заполнит -->
-                </div>
+
+                <div class="up-list" id="upgradesList"></div>
             </div>
         </section>
     </main>
@@ -961,42 +889,54 @@
 
             <button class="nav-btn active" data-tab-target="home">
                 <svg viewBox="0 0 24 24">
-                    <path d="M4.5 10.5L12 4.8l7.5 5.7V19a1.5 1.5 0 0 1-1.5 1.5h-3.75a.75.75 0 0 1-.75-.75v-4.5h-3v4.5a.75.75 0 0 1-.75.75H6A1.5 1.5 0 0 1 4.5 19v-8.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4.5 10.5L12 4.8l7.5 5.7V19a1.5 1.5 0 0 1-1.5 1.5h-3.75a.75.75 0 0 1-.75-.75v-4.5h-3v4.5a.75.75 0 0 1-.75.75H6A1.5 1.5 0 0 1 4.5 19v-8.5z"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Дом</span>
+                <span>Coin</span>
             </button>
 
             <button class="nav-btn" data-tab-target="tasks">
                 <svg viewBox="0 0 24 24">
-                    <path d="M7.5 4.5h9a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V6a1.5 1.5 0 0 1 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                    <path d="M9 9h6M9 12h3.5M9 15h4.5M10 3h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7.5 4.5h9a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V6a1.5 1.5 0 0 1 1.5-1.5z"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round"/>
+                    <path d="M9 9h6M9 12h5M9 15h4M10 3h4"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Задачи</span>
+                <span>Tasks</span>
             </button>
 
             <button class="nav-btn" data-tab-target="leaderboard">
                 <svg viewBox="0 0 24 24">
-                    <path d="M6 10.5v9M12 5.5v14M18 8v11.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                    <path d="M4 10.5h4M10 5.5h4M16 8h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 10.5v9M12 5.5v14M18 8v11.5"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round"/>
+                    <path d="M4 10.5h4M10 5.5h4M16 8h4"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Топ</span>
+                <span>Top</span>
             </button>
 
             <button class="nav-btn" data-tab-target="upgrades">
                 <svg viewBox="0 0 24 24">
-                    <path d="M7.5 5h9l1.5 4.5-6 9-6-9L7.5 5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-                    <path d="M10 9l2 2 2-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7.5 5h9l1.5 4.5-6 9-6-9L7.5 5z"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linejoin="round"/>
+                    <path d="M10 9l2 2 2-2"
+                          fill="none" stroke="currentColor" stroke-width="1.4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span>Буст</span>
+                <span>Boost</span>
             </button>
         </div>
     </div>
 </div>
 
 <script>
-    // ==============================
-    // 1. Telegram Mini App интеграция
-    // ==============================
+    // ============ 1. Telegram Init ============
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
         tg.ready();
@@ -1006,122 +946,121 @@
     const initDataUnsafe = tg ? tg.initDataUnsafe : {};
     const currentUser = initDataUnsafe.user || null;
 
-    // ==============================
-    // 2. Базовые переменные игры
-    // ==============================
-    let balance = 0;
-    let perTap = 1;
-    let tapMultiplier = 1;
+    // ============ 2. Game State ============
+    let balance = 0.0;
+    let perTap = 0.1;      // базовые очки за тап
+    let tapMultiplier = 1; // множитель от апгрейдов
     let totalTaps = 0;
     let sessionTaps = 0;
 
-    // для апгрейдов: локальное состояние
     const upgrades = [
         {
-            id: 'tap_x2',
-            title: 'x2 Tap Boost',
-            description: 'Удваивает доход за тап навсегда.',
+            id: 'tap_plus_01',
+            title: '+0.1 к тапу',
+            description: 'Небольшой, но стабильный прирост очков за каждый тап.',
+            priceStars: 10,
+            levelLabel: 'Common',
+            unlocked: false,
+            effect: () => { perTap += 0.1; }
+        },
+        {
+            id: 'tap_plus_03',
+            title: '+0.3 к тапу',
+            description: 'Серьёзный прирост очков, идеально для активных игроков.',
             priceStars: 25,
+            levelLabel: 'Rare',
+            unlocked: false,
+            effect: () => { perTap += 0.3; }
+        },
+        {
+            id: 'tap_x2',
+            title: 'x2 множитель',
+            description: 'Умножает текущие очки за тап на 2.',
+            priceStars: 60,
             levelLabel: 'Epic',
             unlocked: false,
-        },
-        {
-            id: 'tap_x3',
-            title: 'x3 Tap Boost',
-            description: 'Тройной доход за каждый тап.',
-            priceStars: 60,
-            levelLabel: 'Legendary',
-            unlocked: false,
-        },
-        {
-            id: 'auto_miner',
-            title: 'Auto Miner',
-            description: 'Пассивный доход каждую минуту.',
-            priceStars: 80,
-            levelLabel: 'Utility',
-            unlocked: false,
+            effect: () => { tapMultiplier *= 2; }
         }
     ];
 
-    // Задания (пример)
     const tasks = [
         {
-            id: 'sub_main',
-            title: 'Подписаться на основной канал',
-            description: 'Нажми "Начать" и подпишись на канал.',
-            reward: 3,
+            id: 'task_sub_main',
+            title: 'Подпишитесь на основной канал',
+            bonusLabel: '+10% шанс',
             link: 'https://t.me/your_channel',
             status: 'new' // new | pending | completed
         },
         {
-            id: 'sub_chat',
-            title: 'Вступить в чат комьюнити',
-            description: 'Заходи в чат и общайся с другими игроками.',
-            reward: 3,
+            id: 'task_open_market',
+            title: 'Откройте Market',
+            bonusLabel: '+10% шанс',
+            link: 'https://t.me/your_market',
+            status: 'new'
+        },
+        {
+            id: 'task_sub_chat',
+            title: 'Подпишитесь на чат комьюнити',
+            bonusLabel: '+10% шанс',
             link: 'https://t.me/your_chat',
+            status: 'new'
+        },
+        {
+            id: 'task_open_stars',
+            title: 'Откройте Stars раздел',
+            bonusLabel: '+10% шанс',
+            link: 'https://t.me/your_some_bot',
             status: 'new'
         }
     ];
 
-    // ==============================
-    // 3. Настройки API (замени на свои)
-    // ==============================
-    const API_BASE = 'https://your-backend.com'; // <--- Свой домен
+    // API-заглушки — поменяешь на свои
+    const API_BASE = 'https://your-backend.com';
     const LEADERBOARD_API = API_BASE + '/api/leaderboard';
-    const TASK_CHECK_API = API_BASE + '/api/tasks/check';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
+    const INVOICE_BASE_URL = 'https://t.me/your_bot?start=invoice';
 
-    // Пример ссылки инвойса (замени на свою)
-    // Можно передавать query-параметр upgradeId, чтобы бот понимал, за что платёж
-    const INVOICE_BASE_URL = 'https://t.me/$iPEf6FFc0EiyFgAAmNOfe7Gn8oA';
-
-    // ==============================
-    // 4. DOM-элементы
-    // ==============================
+    // ============ 3. DOM ============
     const balanceValueEl = document.getElementById('balanceValue');
-    const perTapValueEl = document.getElementById('perTapValue');
-    const tapMultiplierLabelEl = document.getElementById('tapMultiplierLabel');
-    const balanceChangeEl = document.getElementById('balanceChange');
-    const sessionTapsValueEl = document.getElementById('sessionTapsValue');
-    const totalTapsValueEl = document.getElementById('totalTapsValue');
-    const sessionStatEl = document.getElementById('sessionStat');
-    const userLabelEl = document.getElementById('userLabel');
-    const tapFloatEl = document.getElementById('tapFloat');
-    const coinEl = document.getElementById('coin');
+    const perTapLabelEl  = document.getElementById('perTapLabel');
+    const sessionStatEl  = document.getElementById('sessionStat');
+    const userLabelEl    = document.getElementById('userLabel');
+    const userAvatarEl   = document.getElementById('userAvatar');
+    const coinEl         = document.getElementById('coin');
 
-    const tasksListEl = document.getElementById('tasksList');
-    const upgradesListEl = document.getElementById('upgradesList');
+    const tasksListEl    = document.getElementById('tasksList');
 
-    const lbUserRankEl = document.getElementById('lbUserRank');
+    const lbUserRankEl   = document.getElementById('lbUserRank');
     const lbUserAvatarEl = document.getElementById('lbUserAvatar');
-    const lbUserNameEl = document.getElementById('lbUserName');
+    const lbUserNameEl   = document.getElementById('lbUserName');
     const lbUserHandleEl = document.getElementById('lbUserHandle');
-    const lbUserScoreEl = document.getElementById('lbUserScore');
-    const lbListEl = document.getElementById('lbList');
+    const lbUserScoreEl  = document.getElementById('lbUserScore');
+    const lbListEl       = document.getElementById('lbList');
     const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
 
-    const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
-    const screens = Array.from(document.querySelectorAll('.screen'));
+    const upgradesListEl = document.getElementById('upgradesList');
+
+    const navButtons     = Array.from(document.querySelectorAll('.nav-btn'));
+    const screens        = Array.from(document.querySelectorAll('.screen'));
     const navIndicatorEl = document.getElementById('navIndicator');
 
-    // ==============================
-    // 5. Инициализация пользователя
-    // ==============================
+    // ============ 4. User Info ============
     function initUserInfo() {
         if (currentUser) {
             const name = [currentUser.first_name, currentUser.last_name].filter(Boolean).join(' ');
             userLabelEl.textContent = name || 'Player';
+
             lbUserNameEl.textContent = name || 'Player';
             lbUserHandleEl.textContent = currentUser.username ? '@' + currentUser.username : 'без юзернейма';
 
             if (currentUser.photo_url) {
+                userAvatarEl.style.backgroundImage = `url(${currentUser.photo_url})`;
+
                 const img = document.createElement('img');
                 img.src = currentUser.photo_url;
                 img.alt = 'avatar';
                 lbUserAvatarEl.innerHTML = '';
                 lbUserAvatarEl.appendChild(img);
-            } else {
-                lbUserAvatarEl.innerHTML = '';
             }
         } else {
             userLabelEl.textContent = 'Гость';
@@ -1130,86 +1069,115 @@
         }
     }
 
-    // ==============================
-    // 6. Обновление UI
-    // ==============================
-    function updateBalanceUI(diff = 0) {
-        balanceValueEl.textContent = balance.toString();
-        totalTapsValueEl.textContent = totalTaps.toString();
-        sessionTapsValueEl.textContent = sessionTaps.toString();
-        sessionStatEl.textContent = `Session ${sessionTaps} taps`;
+    // ============ 5. UI Helpers ============
+    function currentPerTap() {
+        return +(perTap * tapMultiplier).toFixed(2);
+    }
 
-        if (diff !== 0) {
-            const sign = diff > 0 ? '+' : '';
-            balanceChangeEl.textContent = `${sign}${diff} V`;
-            balanceChangeEl.style.opacity = '1';
-            setTimeout(() => {
-                balanceChangeEl.style.opacity = '0';
-            }, 550);
-        } else {
-            balanceChangeEl.textContent = '';
-        }
+    function updateBalanceUI(diff = 0) {
+        balanceValueEl.textContent = balance.toFixed(1);
+        sessionStatEl.textContent  = `${sessionTaps} taps`;
+        lbUserScoreEl.innerHTML    = `${balance.toFixed(1)}<span> pts</span>`;
     }
 
     function updateTapInfoUI() {
-        perTapValueEl.textContent = `+${perTap}`;
-        tapMultiplierLabelEl.textContent = `x${tapMultiplier}`;
+        perTapLabelEl.textContent = `+${currentPerTap()}`;
     }
 
-    function showTapFloat(value) {
-        tapFloatEl.textContent = `+${value}`;
-        tapFloatEl.classList.remove('show');
-        // перезапуск анимации
-        void tapFloatEl.offsetWidth;
-        tapFloatEl.classList.add('show');
+    function createTapFloat(x, y, amount) {
+        const rect = coinEl.getBoundingClientRect();
+        const wrapperRect = coinEl.getBoundingClientRect();
+
+        const span = document.createElement('div');
+        span.className = 'tap-float';
+        const localX = x - wrapperRect.left;
+        const localY = y - wrapperRect.top;
+
+        span.style.left = localX + 'px';
+        span.style.top  = localY + 'px';
+        span.textContent = `+${amount.toFixed(1)}`;
+
+        coinEl.appendChild(span);
+
+        if (window.gsap) {
+            gsap.fromTo(span,
+                {opacity: 1, y: 0},
+                {
+                    opacity: 0,
+                    y: -28,
+                    duration: 0.45,
+                    ease: 'power2.out',
+                    onComplete: () => span.remove()
+                });
+        } else {
+            span.style.opacity = '1';
+            setTimeout(() => span.remove(), 400);
+        }
     }
 
-    // ==============================
-    // 7. Логика тапа
-    // ==============================
-    function handleTap() {
-        const gain = perTap * tapMultiplier;
-        balance += gain;
+    // ============ 6. Tap Logic ============
+    function handleTap(event) {
+        // Вибрация
+        if (navigator.vibrate) {
+            navigator.vibrate(10);
+        }
+
+        const gain = currentPerTap();
+        balance = +(balance + gain).toFixed(2);
         totalTaps += 1;
         sessionTaps += 1;
 
         updateBalanceUI(gain);
-        showTapFloat(gain);
-        coinEl.classList.add('tap-anim');
-        setTimeout(() => coinEl.classList.remove('tap-anim'), 190);
+        createTapFloat(event.clientX, event.clientY, gain);
 
-        // TODO: при желании отправлять на сервер статистику тапа
-        // sendTapToServer(gain);
+        coinEl.classList.add('tap-anim');
+        setTimeout(() => coinEl.classList.remove('tap-anim'), 180);
+
+        // TODO: сюда можно добавить отправку статистики на сервер
     }
 
     coinEl.addEventListener('click', handleTap);
 
-    // ==============================
-    // 8. Навигация по вкладкам
-    // ==============================
+    // ============ 7. Tabs + GSAP ============
     function setActiveTab(tabName) {
         screens.forEach(screen => {
-            if (screen.dataset.tab === tabName) {
-                screen.classList.add('active');
+            const isActive = screen.dataset.tab === tabName;
+            if (window.gsap) {
+                gsap.to(screen, {
+                    duration: 0.22,
+                    autoAlpha: isActive ? 1 : 0,
+                    x: isActive ? 0 : 18,
+                    ease: 'power2.out',
+                    onStart: () => {
+                        if (isActive) screen.classList.add('active');
+                    },
+                    onComplete: () => {
+                        if (!isActive) screen.classList.remove('active');
+                    }
+                });
             } else {
-                screen.classList.remove('active');
+                screen.classList.toggle('active', isActive);
             }
         });
 
         navButtons.forEach((btn, index) => {
             const target = btn.dataset.tabTarget;
-            if (target === tabName) {
-                btn.classList.add('active');
-                moveNavIndicator(index);
-            } else {
-                btn.classList.remove('active');
-            }
+            const isActive = target === tabName;
+            btn.classList.toggle('active', isActive);
+            if (isActive) moveNavIndicator(index);
         });
     }
 
     function moveNavIndicator(index) {
-        const percent = index * 25;
-        navIndicatorEl.style.transform = `translateX(${percent}%)`;
+        if (window.gsap) {
+            gsap.to(navIndicatorEl, {
+                duration: 0.22,
+                xPercent: index * 100,
+                ease: 'power2.out'
+            });
+        } else {
+            navIndicatorEl.style.transform = `translateX(${index * 100}%)`;
+        }
     }
 
     navButtons.forEach((btn, index) => {
@@ -1219,164 +1187,98 @@
         });
     });
 
-    // ==============================
-    // 9. Рендер заданий
-    // ==============================
+    // ============ 8. Tasks ============
     function renderTasks() {
         tasksListEl.innerHTML = '';
 
         tasks.forEach(task => {
-            const item = document.createElement('div');
-            item.className = 'task-item';
+            const row = document.createElement('div');
+            row.className = 'task-row';
 
-            const top = document.createElement('div');
-            top.className = 'task-top';
+            const icon = document.createElement('div');
+            icon.className = 'task-icon';
+            icon.textContent = '✈️';
 
-            const left = document.createElement('div');
+            const main = document.createElement('div');
+            main.className = 'task-main';
+
             const title = document.createElement('div');
             title.className = 'task-title';
             title.textContent = task.title;
 
-            const desc = document.createElement('div');
-            desc.className = 'task-desc';
-            desc.textContent = task.description;
+            const bonus = document.createElement('div');
+            bonus.className = 'task-bonus';
+            bonus.textContent = task.bonusLabel;
 
-            left.appendChild(title);
-            left.appendChild(desc);
+            main.appendChild(title);
+            main.appendChild(bonus);
 
-            const reward = document.createElement('div');
-            reward.className = 'task-reward';
-            reward.textContent = `+${task.reward} ★`;
-
-            top.appendChild(left);
-            top.appendChild(reward);
-
-            const bottom = document.createElement('div');
-            bottom.className = 'task-bottom';
-
-            const status = document.createElement('div');
-            status.className = 'task-status';
-            if (task.status === 'completed') {
-                status.classList.add('completed');
-            }
-
-            const statusDot = document.createElement('div');
-            statusDot.className = 'task-status-dot';
-
-            const statusText = document.createElement('span');
-            if (task.status === 'new') statusText.textContent = 'Новое задание';
-            if (task.status === 'pending') statusText.textContent = 'Ожидает проверки';
-            if (task.status === 'completed') statusText.textContent = 'Выполнено';
-
-            status.appendChild(statusDot);
-            status.appendChild(statusText);
-
-            const actions = document.createElement('div');
-            actions.className = 'task-actions';
-
-            const startBtn = document.createElement('button');
-            startBtn.className = 'btn secondary';
-            startBtn.textContent = task.status === 'new' ? 'Начать' : 'Открыть';
-
-            const checkBtn = document.createElement('button');
-            checkBtn.className = 'btn';
-            checkBtn.textContent = 'Проверить';
+            const actionWrap = document.createElement('div');
+            actionWrap.className = 'task-action';
 
             if (task.status === 'completed') {
-                checkBtn.disabled = true;
+                const pill = document.createElement('div');
+                pill.className = 'task-pill-done';
+                pill.textContent = 'Получено ✓';
+                actionWrap.appendChild(pill);
+            } else {
+                const btn = document.createElement('button');
+                btn.className = 'task-btn';
+                btn.textContent = 'Начать';
+                btn.addEventListener('click', () => {
+                    startTask(task);
+                });
+                actionWrap.appendChild(btn);
             }
 
-            startBtn.addEventListener('click', () => {
-                if (tg && task.link) {
-                    tg.openTelegramLink(task.link);
-                } else if (task.link) {
-                    window.open(task.link, '_blank');
-                }
-                if (task.status === 'new') {
-                    task.status = 'pending';
-                    renderTasks();
-                }
-            });
+            row.appendChild(icon);
+            row.appendChild(main);
+            row.appendChild(actionWrap);
 
-            checkBtn.addEventListener('click', () => {
-                if (task.status === 'completed') return;
-                // Здесь должен быть запрос к серверу, который уже проверяет подписку/действие
-                checkTaskOnServer(task);
-            });
-
-            actions.appendChild(startBtn);
-            actions.appendChild(checkBtn);
-
-            bottom.appendChild(status);
-            bottom.appendChild(actions);
-
-            item.appendChild(top);
-            item.appendChild(bottom);
-
-            tasksListEl.appendChild(item);
+            tasksListEl.appendChild(row);
         });
     }
 
-    async function checkTaskOnServer(task) {
-        // ⚠️ ЭТО ШАБЛОН. На реальном сервере нужно:
-        // 1) по initData понять user_id
-        // 2) проверить подписку / выполнение
-        // 3) вернуть { ok: true/false, alreadyCompleted: bool }
-        try {
-            const payload = {
-                task_id: task.id
-            };
+    function startTask(task) {
+        if (tg && task.link) {
+            tg.openTelegramLink(task.link);
+        } else if (task.link) {
+            window.open(task.link, '_blank');
+        }
+        task.status = 'pending';
+        // Когда пользователь вернётся в мини-апп — засчитываем
+        renderTasks();
+    }
 
-            const res = await fetch(TASK_CHECK_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': tg ? tg.initData : ''
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) throw new Error('HTTP error ' + res.status);
-
-            const data = await res.json();
-            if (data.ok && !task.rewarded) {
+    function completePendingTasks() {
+        let changed = false;
+        tasks.forEach(task => {
+            if (task.status === 'pending') {
                 task.status = 'completed';
-                task.rewarded = true;
-                // выдать награду в виде V-монет (или просто звёзд в боте)
-                const reward = Number(task.reward) || 0;
-                balance += reward;
-                updateBalanceUI(reward);
-            } else if (data.alreadyCompleted) {
-                task.status = 'completed';
+                // при желании можно добавить награду в очках
+                changed = true;
             }
-        } catch (err) {
-            console.warn('Task check failed, используем фейковый успех для демо', err);
-            // DEMO: имитация успеха
-            if (!task.rewarded) {
-                task.status = 'completed';
-                task.rewarded = true;
-                const reward = Number(task.reward) || 0;
-                balance += reward;
-                updateBalanceUI(reward);
-            } else {
-                task.status = 'completed';
-            }
-        } finally {
+        });
+        if (changed) {
             renderTasks();
         }
     }
 
-    // ==============================
-    // 10. Лидерборд (реальный через сервер)
-    // ==============================
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            completePendingTasks();
+        }
+    });
+
+    // ============ 9. Leaderboard ============
     async function loadLeaderboard() {
         lbListEl.innerHTML = '';
         const loading = document.createElement('div');
-        loading.textContent = 'Загружаем топ…';
         loading.style.fontSize = '11px';
         loading.style.color = 'var(--text-soft)';
         loading.style.textAlign = 'center';
         loading.style.paddingTop = '8px';
+        loading.textContent = 'Загружаем топ…';
         lbListEl.appendChild(loading);
 
         try {
@@ -1387,32 +1289,20 @@
                 }
             });
 
-            if (!res.ok) throw new Error('HTTP error ' + res.status);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
 
-            // ожидаемый формат:
-            // {
-            //   "you": { "rank": 7, "score": 1200 },
-            //   "top": [
-            //      { "rank": 1, "name": "User", "score": 5000 },
-            //      ...
-            //   ]
-            // }
-
-            const you = (data && data.you) || { rank: '-', score: balance };
+            const you = (data && data.you) || {rank: '-', score: balance};
             const top = (data && data.top) || [];
 
             lbUserRankEl.textContent = you.rank || '-';
-            lbUserScoreEl.innerHTML = `${you.score ?? 0}<span> V</span>`;
+            lbUserScoreEl.innerHTML = `${(you.score ?? 0).toFixed(1)}<span> pts</span>`;
 
             lbListEl.innerHTML = '';
             top.forEach(entry => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
-
-                if (you.rank && entry.rank === you.rank) {
-                    row.classList.add('you');
-                }
+                if (you.rank && entry.rank === you.rank) row.classList.add('you');
 
                 const rank = document.createElement('div');
                 rank.className = 'lb-row-rank';
@@ -1420,16 +1310,15 @@
 
                 const name = document.createElement('div');
                 name.className = 'lb-row-name';
-                name.textContent = entry.name || 'Unknown';
+                name.textContent = entry.name || 'Player';
 
                 const score = document.createElement('div');
                 score.className = 'lb-row-score';
-                score.innerHTML = `${entry.score ?? 0}<span> V</span>`;
+                score.innerHTML = `${(entry.score ?? 0).toFixed(1)}<span> pts</span>`;
 
                 row.appendChild(rank);
                 row.appendChild(name);
                 row.appendChild(score);
-
                 lbListEl.appendChild(row);
             });
 
@@ -1442,30 +1331,26 @@
                 empty.textContent = 'Пока в топе никого нет. Будь первым!';
                 lbListEl.appendChild(empty);
             }
-        } catch (err) {
-            console.warn('Leaderboard load failed, показываем демо данные', err);
+        } catch (e) {
+            console.warn('Leaderboard load failed, demo mode', e);
             lbListEl.innerHTML = '';
-
-            // DEMO: фейковые данные
             const demo = [
-                { rank: 1, name: 'GlassLord', score: 4200 },
-                { rank: 2, name: 'TapWizard', score: 3800 },
-                { rank: 3, name: 'BlueGhost', score: 3500 },
-                { rank: 4, name: 'NightShift', score: 3100 },
-                { rank: 5, name: 'MoonTapper', score: 2700 },
-                { rank: 6, name: 'SnowCoin', score: 2300 },
-                { rank: 7, name: 'You', score: balance }
+                {rank: 1, name: 'GlassLord', score: 4200},
+                {rank: 2, name: 'TapWizard', score: 3800},
+                {rank: 3, name: 'BlueGhost', score: 3500},
+                {rank: 4, name: 'NightShift', score: 3100},
+                {rank: 5, name: 'MoonTapper', score: 2700},
+                {rank: 6, name: 'SnowCoin', score: 2300},
+                {rank: 7, name: 'You', score: balance}
             ];
 
             lbUserRankEl.textContent = '7';
-            lbUserScoreEl.innerHTML = `${balance}<span> V</span>`;
+            lbUserScoreEl.innerHTML = `${balance.toFixed(1)}<span> pts</span>`;
 
             demo.forEach(entry => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
-                if (entry.name === 'You') {
-                    row.classList.add('you');
-                }
+                if (entry.name === 'You') row.classList.add('you');
 
                 const rank = document.createElement('div');
                 rank.className = 'lb-row-rank';
@@ -1477,12 +1362,11 @@
 
                 const score = document.createElement('div');
                 score.className = 'lb-row-score';
-                score.innerHTML = `${entry.score}<span> V</span>`;
+                score.innerHTML = `${entry.score.toFixed ? entry.score.toFixed(1) : entry.score}<span> pts</span>`;
 
                 row.appendChild(rank);
                 row.appendChild(name);
                 row.appendChild(score);
-
                 lbListEl.appendChild(row);
             });
         }
@@ -1490,55 +1374,47 @@
 
     refreshLeaderboardBtn.addEventListener('click', loadLeaderboard);
 
-    // ==============================
-    // 11. Апгрейды + openInvoice
-    // ==============================
+    // ============ 10. Upgrades + openInvoice ============
     function renderUpgrades() {
         upgradesListEl.innerHTML = '';
 
         upgrades.forEach(upg => {
             const item = document.createElement('div');
-            item.className = 'upgrade-item';
-            if (upg.unlocked) {
-                item.classList.add('unlocked');
-            }
+            item.className = 'up-item';
+            if (upg.unlocked) item.classList.add('unlocked');
 
             const top = document.createElement('div');
-            top.className = 'upgrade-top';
+            top.className = 'up-top';
 
-            const title = document.createElement('div');
-            title.className = 'upgrade-title';
-            title.textContent = upg.title;
+            const name = document.createElement('div');
+            name.className = 'up-name';
+            name.textContent = upg.title;
 
             const badge = document.createElement('div');
-            badge.className = 'upgrade-badge';
-            badge.textContent = upg.levelLabel || 'Boost';
+            badge.className = 'up-badge';
+            badge.textContent = upg.levelLabel;
 
-            top.appendChild(title);
+            top.appendChild(name);
             top.appendChild(badge);
 
             const desc = document.createElement('div');
-            desc.className = 'upgrade-desc';
+            desc.className = 'up-desc';
             desc.textContent = upg.description;
 
             const bottom = document.createElement('div');
-            bottom.className = 'upgrade-bottom';
+            bottom.className = 'up-bottom';
 
             const price = document.createElement('div');
-            price.className = 'upgrade-price';
-            price.innerHTML = `${upg.priceStars} ★<span> через openInvoice</span>`;
+            price.className = 'up-price';
+            price.innerHTML = `${upg.priceStars} ★ <span>через openInvoice</span>`;
 
             const btn = document.createElement('button');
             btn.className = 'btn btn-danger';
-            btn.textContent = upg.unlocked ? 'Куплено' : 'Купить за звёзды';
-
-            if (upg.unlocked) {
-                btn.disabled = true;
-            }
+            btn.textContent = upg.unlocked ? 'Куплено' : 'Купить';
+            if (upg.unlocked) btn.disabled = true;
 
             btn.addEventListener('click', () => {
-                if (upg.unlocked) return;
-                openUpgradeInvoice(upg);
+                if (!upg.unlocked) openUpgradeInvoice(upg);
             });
 
             bottom.appendChild(price);
@@ -1552,81 +1428,94 @@
         });
     }
 
-    function applyUpgradeEffect(upgradeId) {
-        const upg = upgrades.find(u => u.id === upgradeId);
-        if (!upg) return;
-
-        if (upgradeId === 'tap_x2') {
-            tapMultiplier *= 2;
-        } else if (upgradeId === 'tap_x3') {
-            tapMultiplier *= 3;
-        } else if (upgradeId === 'auto_miner') {
-            // пример: каждые 60 сек добавлять 10 V
-            setInterval(() => {
-                const gain = 10;
-                balance += gain;
-                updateBalanceUI(gain);
-            }, 60000);
-        }
+    function applyUpgrade(upg) {
+        if (upg.unlocked) return;
+        upg.unlocked = true;
+        if (typeof upg.effect === 'function') upg.effect();
         updateTapInfoUI();
+        renderUpgrades();
     }
 
     async function openUpgradeInvoice(upg) {
         if (!tg) {
-            alert('openInvoice работает только внутри Telegram Mini App.');
+            alert('Оплата через Stars работает только внутри Telegram.');
             return;
         }
 
-        // Обычно инвойс создаётся ботом. Здесь мы просто открываем ссылку,
-        // в которой твой бот по start-param понимает, какой апгрейд покупать.
         const url = `${INVOICE_BASE_URL}_${encodeURIComponent(upg.id)}`;
 
         tg.openInvoice(url, async (status) => {
-            // Возможные статусы: "paid", "failed", "pending", "cancelled"
             if (status === 'paid') {
                 try {
-                    // Уведомляем сервер, что апгрейд куплен
                     await fetch(UPGRADE_APPLY_API, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Telegram-Init-Data': tg.initData
                         },
-                        body: JSON.stringify({ upgrade_id: upg.id })
+                        body: JSON.stringify({upgrade_id: upg.id})
                     });
                 } catch (e) {
                     console.warn('Не удалось отправить апгрейд на сервер, но локально засчитываем', e);
                 }
 
-                upg.unlocked = true;
-                applyUpgradeEffect(upg.id);
-                renderUpgrades();
+                applyUpgrade(upg);
 
                 tg.showPopup({
                     title: 'Апгрейд активирован',
                     message: `${upg.title} теперь работает!`,
-                    buttons: [{ id: 'ok', type: 'default', text: 'Ок' }]
+                    buttons: [{id: 'ok', type: 'default', text: 'Ок'}]
                 });
             } else if (status === 'failed') {
                 tg.showPopup({
                     title: 'Ошибка оплаты',
-                    message: 'Не удалось оплатить инвойс. Попробуй ещё раз.',
-                    buttons: [{ id: 'ok', type: 'close', text: 'Понятно' }]
+                    message: 'Не удалось оплатить инвойс. Попробуйте ещё раз.',
+                    buttons: [{id: 'ok', type: 'close', text: 'Понятно'}]
                 });
             }
         });
     }
 
-    // ==============================
-    // 12. Старт приложения
-    // ==============================
+    // ============ 11. Snow (particles.js) ============
+    function initSnow() {
+        if (!window.particlesJS) return;
+        particlesJS('snow', {
+            particles: {
+                number: {value: 110, density: {enable: true, value_area: 800}},
+                color: {value: '#ffffff'},
+                shape: {type: 'circle'},
+                opacity: {value: 0.7, random: true},
+                size: {value: 3, random: true},
+                line_linked: {enable: false},
+                move: {
+                    enable: true,
+                    speed: 1.3,
+                    direction: 'bottom',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out'
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {onhover: {enable: false}, onclick: {enable: false}, resize: true}
+            },
+            retina_detect: true
+        });
+    }
+
+    // ============ 12. App Init ============
     function initApp() {
         initUserInfo();
-        updateBalanceUI(0);
+        updateBalanceUI();
         updateTapInfoUI();
         renderTasks();
         renderUpgrades();
         loadLeaderboard();
+        initSnow();
+
+        // стартовое положение бегунка
+        moveNavIndicator(0);
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
