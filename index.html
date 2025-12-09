@@ -1442,7 +1442,7 @@
             return;
         }
 
-        const url = `${https://t.me/$iPEf6FFc0EiyFgAAmNOfe7Gn8oA}_${encodeURIComponent(upg.id)}`;
+        const url = `${INVOICE_BASE_URL}_${encodeURIComponent(upg.id)}`;
 
         tg.openInvoice(url, async (status) => {
             if (status === 'paid') {
@@ -1522,4 +1522,5 @@
 </script>
 </body>
 </html>
+
 
