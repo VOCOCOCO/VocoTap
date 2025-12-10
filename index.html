@@ -175,6 +175,8 @@
             padding: 6px 4px 4px;
             opacity: 0;
             pointer-events: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .screen.active {
@@ -195,12 +197,13 @@
 
         /* HOME */
         .home-wrapper {
-            height: 100%;
+            min-height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 18px;
+            position: relative;
         }
 
         .home-balance {
@@ -237,11 +240,11 @@
             height: 100%;
             object-fit: contain;
             pointer-events: none;
-            transition: transform 0.12s ease;
+            transition: transform 0.05s ease;
         }
 
         .coin-wrapper.tap-anim .coin-img {
-            transform: scale(0.92);
+            transform: scale(0.97);
         }
 
         .home-note {
@@ -259,6 +262,35 @@
             opacity: 0;
         }
 
+        /* GIFT */
+        .gift-box {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #ffe8ff 40%, #ff4b6a 75%, #260016 100%);
+            box-shadow: 0 12px 26px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            z-index: 5;
+        }
+
+        .gift-float {
+            position: absolute;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffe6ff;
+            text-shadow: 0 0 6px rgba(0,0,0,0.7);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 6;
+        }
+
         /* TASKS */
         .tasks-hero {
             position: relative;
@@ -272,7 +304,7 @@
             align-items: center;
             justify-content: center;
             color: #ffffff;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 600;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -282,18 +314,18 @@
         .tasks-hero::after {
             content: "❄";
             position: absolute;
-            font-size: 28px;
-            opacity: 0.7;
+            font-size: 18px;
+            opacity: 0.55;
         }
 
         .tasks-hero::before {
             top: 10px;
-            left: 14px;
+            left: 18px;
         }
 
         .tasks-hero::after {
             bottom: 10px;
-            right: 18px;
+            right: 20px;
         }
 
         .tasks-card {
@@ -717,6 +749,9 @@
             border: 1px solid rgba(255,255,255,0.2);
             background: radial-gradient(circle at top,
             rgba(255,255,255,0.08), rgba(4,7,20,0.98));
+            max-height: 260px;
+            overflow-y: auto;
+            display: none; /* показываем только когда есть инвестиция */
         }
 
         .invest-info-row {
@@ -726,15 +761,25 @@
             font-size: 11px;
             color: var(--text-soft);
             margin-bottom: 4px;
+            gap: 8px;
         }
 
         .invest-info-row strong {
             color: var(--text-main);
         }
 
+        .invest-profit {
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .invest-profit span {
+            font-weight: 600;
+        }
+
         .invest-chart-wrap {
             position: relative;
-            margin-top: 4px;
+            margin-top: 6px;
         }
 
         #investChart {
@@ -828,8 +873,15 @@
         }
 
         /* scrollbars */
-        .lb-list::-webkit-scrollbar { width: 3px; }
-        .lb-list::-webkit-scrollbar-thumb {
+        .lb-list::-webkit-scrollbar,
+        .screen::-webkit-scrollbar,
+        .invest-panel::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .lb-list::-webkit-scrollbar-thumb,
+        .screen::-webkit-scrollbar-thumb,
+        .invest-panel::-webkit-scrollbar-thumb {
             background: rgba(255,255,255,0.24);
             border-radius: 999px;
         }
@@ -921,7 +973,7 @@
                 <div class="lb-list" id="lbList"></div>
 
                 <div class="lb-footer-note">
-                    Если сервер недоступен — показываются демо-игроки user1…user10.
+                    Если сервер недоступен — показываются демо-игроки user1…user10 (по 0 pts).
                 </div>
 
                 <div class="lb-remind">
@@ -964,7 +1016,16 @@
                     </div>
                     <div class="invest-info-row">
                         <div>Текущая стоимость: <strong><span id="investValueLabel">0.0</span> pts</strong></div>
-                        <button class="btn" id="investWithdrawBtn">Вывести</button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn" id="investTopUpBtn">Пополнить</button>
+                            <button class="btn" id="investWithdrawBtn">Вывести</button>
+                        </div>
+                    </div>
+                    <div class="invest-info-row">
+                        <div class="invest-profit">
+                            Прибыль: <span id="investProfitLabel">0.0%</span>
+                        </div>
+                        <div id="investTimeLabel" style="font-size:10px;color:var(--text-muted); text-align:right;"></div>
                     </div>
 
                     <div class="invest-chart-wrap">
@@ -1089,6 +1150,7 @@
             id: 'task_sub_main',
             title: 'Подпишитесь на основной канал',
             bonusLabel: '+10% шанс',
+            icon: '📢',
             link: 'https://t.me/your_channel',
             status: 'new'
         },
@@ -1096,6 +1158,7 @@
             id: 'task_open_market',
             title: 'Откройте Market',
             bonusLabel: '+10% шанс',
+            icon: '🛒',
             link: 'https://t.me/your_market',
             status: 'new'
         },
@@ -1103,6 +1166,7 @@
             id: 'task_sub_chat',
             title: 'Подпишитесь на чат комьюнити',
             bonusLabel: '+10% шанс',
+            icon: '💬',
             link: 'https://t.me/your_chat',
             status: 'new'
         },
@@ -1110,16 +1174,18 @@
             id: 'task_open_stars',
             title: 'Откройте Stars раздел',
             bonusLabel: '+10% шанс',
+            icon: '⭐',
             link: 'https://t.me/your_some_bot',
             status: 'new'
         }
     ];
 
     // API-заглушки — поменяешь на свои
-    const API_BASE = 'https://your-backend.com';
-    const LEADERBOARD_API = API_BASE + '/api/leaderboard';
+    const API_BASE = 'http://localhost:3000';
+    const LEADERBOARD_API   = API_BASE + '/api/leaderboard';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
-    const REMIND_LINK = 'https://t.me/your_channel'; // TODO ссылка "Напомнить пользователям"
+    const PLAYER_STATE_API  = API_BASE + '/api/player/state';   // GET/POST сохранение игрока
+    const REMIND_LINK       = 'https://t.me/your_channel'; // TODO ссылка "Напомнить пользователям"
 
     // ===== 3. DOM =====
     const balanceValueEl = document.getElementById('balanceValue');
@@ -1153,8 +1219,11 @@
     const investPriceLabelEl = document.getElementById('investPriceLabel');
     const investValueLabelEl = document.getElementById('investValueLabel');
     const investWithdrawBtn  = document.getElementById('investWithdrawBtn');
+    const investTopUpBtn     = document.getElementById('investTopUpBtn');
     const investCanvas       = document.getElementById('investChart');
     const investTooltip      = document.getElementById('investTooltip');
+    const investProfitLabelEl = document.getElementById('investProfitLabel');
+    const investTimeLabelEl   = document.getElementById('investTimeLabel');
 
     // ===== 4. User Info =====
     function initUserInfo() {
@@ -1216,20 +1285,20 @@
                 {
                     opacity: 0,
                     y: -28,
-                    duration: 0.45,
+                    duration: 0.35,
                     ease: 'power2.out',
                     onComplete: () => span.remove()
                 });
         } else {
             span.style.opacity = '1';
-            setTimeout(() => span.remove(), 400);
+            setTimeout(() => span.remove(), 350);
         }
     }
 
-    // ===== 6. Tap Logic =====
+    // ===== 6. Tap Logic (мультитач + маленькая анимация) =====
     function handleTap(event) {
         if (navigator.vibrate) {
-            navigator.vibrate(10);
+            navigator.vibrate(8);
         }
 
         const gain = currentPerTap();
@@ -1239,12 +1308,16 @@
 
         updateBalanceUI();
         createTapFloat(event.clientX, event.clientY, gain);
+        scheduleSaveState();
 
         coinEl.classList.add('tap-anim');
-        setTimeout(() => coinEl.classList.remove('tap-anim'), 150);
+        setTimeout(() => coinEl.classList.remove('tap-anim'), 80);
     }
 
-    coinEl.addEventListener('click', handleTap);
+    coinEl.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        handleTap(e);
+    });
 
     // ===== 7. Tabs + GSAP =====
     function setActiveTab(tabName) {
@@ -1284,7 +1357,7 @@
         }
     }
 
-    navButtons.forEach((btn, index) => {
+    navButtons.forEach((btn) => {
         btn.addEventListener('click', () => {
             const target = btn.dataset.tabTarget;
             setActiveTab(target);
@@ -1301,7 +1374,7 @@
 
             const icon = document.createElement('div');
             icon.className = 'task-icon';
-            icon.textContent = '✈️';
+            icon.textContent = task.icon || '✈️';
 
             const main = document.createElement('div');
             main.className = 'task-main';
@@ -1328,7 +1401,7 @@
             } else {
                 const btn = document.createElement('button');
                 btn.className = 'task-btn';
-                btn.textContent = 'Начать';
+                btn.textContent = task.status === 'pending' ? 'Проверить' : 'Начать';
                 btn.addEventListener('click', () => startTask(task));
                 actionWrap.appendChild(btn);
             }
@@ -1342,13 +1415,16 @@
     }
 
     function startTask(task) {
-        if (tg && task.link) {
-            tg.openTelegramLink(task.link);
-        } else if (task.link) {
-            window.open(task.link, '_blank');
+        if (task.status === 'new' || task.status === 'pending') {
+            if (tg && task.link) {
+                tg.openTelegramLink(task.link);
+            } else if (task.link) {
+                window.open(task.link, '_blank');
+            }
+            task.status = 'pending';
+            renderTasks();
+            scheduleSaveState();
         }
-        task.status = 'pending';
-        renderTasks();
     }
 
     function checkTasksBonus() {
@@ -1372,6 +1448,7 @@
         if (changed) {
             renderTasks();
             checkTasksBonus();
+            scheduleSaveState();
         }
     }
 
@@ -1464,16 +1541,15 @@
 
             const demo = [];
             for (let i = 1; i <= 10; i++) {
-                demo.push({rank: i, username: 'user' + i, score: 1000 - i * 37});
+                demo.push({rank: i, username: 'user' + i, score: 0});
             }
 
-            lbUserRankEl.textContent = '10';
+            lbUserRankEl.textContent = '-';
             lbUserScoreEl.innerHTML = `${balance.toFixed(1)}<span> pts</span>`;
 
             demo.forEach(entry => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
-                if (entry.username === 'user10') row.classList.add('you');
 
                 const rank = document.createElement('div');
                 rank.className = 'lb-row-rank';
@@ -1574,6 +1650,7 @@
         if (typeof upg.effect === 'function') upg.effect();
         updateTapInfoUI();
         renderUpgrades();
+        scheduleSaveState();
     }
 
     function openUpgradeInvoice(upg) {
@@ -1625,12 +1702,12 @@
         });
     }
 
-    // ===== 11. Инвестиции + график =====
+    // ===== 11. Инвестиции + график с датами и % =====
     let investActive = false;
-    let investAmount = 0;   // сколько очков вложено
+    let investAmount = 0;   // сколько очков вложено (суммарно)
     let investPrice = 0;    // текущая цена "монеты"
     let investShares = 0;   // количество "долей"
-    let investHistory = []; // массив цен
+    let investHistory = []; // массив {t, price}
     let investInterval = null;
 
     function updateInvestUI() {
@@ -1642,10 +1719,28 @@
         }
         const value = investShares > 0 ? investShares * investPrice : 0;
         investValueLabelEl.textContent = value.toFixed(1);
+
+        let profitPct = 0;
+        if (investAmount > 0) {
+            profitPct = ((value - investAmount) / investAmount) * 100;
+        }
+        const sign = profitPct > 0 ? '+' : '';
+        investProfitLabelEl.textContent = sign + profitPct.toFixed(1) + '%';
+
+        if (investHistory.length >= 2) {
+            const first = new Date(investHistory[0].t);
+            const last  = new Date(investHistory[investHistory.length - 1].t);
+            const fmt = (d) => d.getHours().toString().padStart(2,'0') + ':' +
+                               d.getMinutes().toString().padStart(2,'0');
+            investTimeLabelEl.textContent = fmt(first) + ' — ' + fmt(last);
+        } else {
+            investTimeLabelEl.textContent = '';
+        }
     }
 
     function pushInvestPoint(price) {
-        investHistory.push(price);
+        const point = { t: Date.now(), price: price };
+        investHistory.push(point);
         if (investHistory.length > 80) investHistory.shift();
         drawInvestChart();
     }
@@ -1655,9 +1750,12 @@
         const ctx = canvas.getContext('2d');
 
         const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * window.devicePixelRatio;
-        canvas.height = rect.height * window.devicePixelRatio;
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        if (rect.width === 0 || rect.height === 0) return;
+
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const w = rect.width;
         const h = rect.height;
@@ -1673,8 +1771,9 @@
 
         if (investHistory.length < 2) return;
 
-        const min = Math.min(...investHistory);
-        const max = Math.max(...investHistory);
+        const prices = investHistory.map(p => p.price);
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
         const range = Math.max(max - min, 0.0001);
 
         ctx.lineWidth = 2;
@@ -1683,31 +1782,70 @@
 
         investHistory.forEach((p, i) => {
             const x = (i / (investHistory.length - 1)) * w;
-            const y = h - ((p - min) / range) * (h * 0.9) - h * 0.05;
+            const y = h - ((p.price - min) / range) * (h * 0.8) - h * 0.1;
 
             if (i === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         });
 
         ctx.stroke();
+
+        // ось времени (подписи слева и справа)
+        const first = new Date(investHistory[0].t);
+        const last  = new Date(investHistory[investHistory.length - 1].t);
+        const fmt = (d) => d.getHours().toString().padStart(2,'0') + ':' +
+                           d.getMinutes().toString().padStart(2,'0');
+
+        ctx.fillStyle = '#b3b9d9';
+        ctx.font = '10px system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Roboto", sans-serif';
+        ctx.textBaseline = 'bottom';
+
+        ctx.fillText(fmt(first), 4, h - 2);
+        const rightLabel = fmt(last);
+        const rightWidth = ctx.measureText(rightLabel).width;
+        ctx.fillText(rightLabel, w - rightWidth - 4, h - 2);
     }
 
     function startInvestSimulation() {
         if (investInterval) clearInterval(investInterval);
 
         investInterval = setInterval(() => {
-            if (!investActive) return;
-            // случайное изменение от -80% до +80% но помягче
+            if (!investActive || investPrice <= 0) return;
+            // небольшой случайный шаг ±0.1..0.9%
             const sign = Math.random() < 0.5 ? -1 : 1;
-            const perc = (Math.random() * 0.8 + 0.1); // 0.1%..0.9 но мы воспринимаем как *
-            const factor = 1 + sign * (perc / 100);   // 0.1–0.8% логичное движение
+            const perc = (Math.random() * 0.8 + 0.1);
+            const factor = 1 + sign * (perc / 100);
 
             investPrice *= factor;
             if (investPrice < 1) investPrice = 1;
 
             pushInvestPoint(investPrice);
             updateInvestUI();
-        }, 5000); // каждые 5 секунд маленький шаг — визуально «постепенно»
+            scheduleSaveState();
+        }, 5000);
+    }
+
+    function openInvestPanelIfNeeded() {
+        if (investActive && investAmount > 0) {
+            investPanelEl.style.display = 'block';
+        }
+    }
+
+    function startNewInvestment(initialAmount) {
+        balance -= initialAmount;
+        updateBalanceUI();
+
+        investActive = true;
+        investAmount = initialAmount;
+        investPrice = 100; // стартовая цена
+        investShares = investAmount / investPrice;
+        investHistory = [{ t: Date.now(), price: investPrice }];
+
+        investPanelEl.style.display = 'block';
+        updateInvestUI();
+        drawInvestChart();
+        startInvestSimulation();
+        scheduleSaveState();
     }
 
     investStartBtn.addEventListener('click', () => {
@@ -1723,17 +1861,46 @@
             return;
         }
 
+        if (!investActive || investShares <= 0) {
+            startNewInvestment(amount);
+        } else {
+            // если уже есть инвест, считаем это пополнением
+            topUpInvestment(amount);
+        }
+    });
+
+    function topUpInvestment(amount) {
         balance -= amount;
         updateBalanceUI();
 
-        investActive = true;
-        investAmount = amount;
-        investPrice = 100; // стартовая цена
-        investShares = investAmount / investPrice;
-        investHistory = [investPrice];
+        // покупаем дополнительные доли по текущей цене
+        const addedShares = amount / investPrice;
+        investShares += addedShares;
+        investAmount += amount;
+
+        investPanelEl.style.display = 'block';
         updateInvestUI();
         drawInvestChart();
-        startInvestSimulation();
+        scheduleSaveState();
+    }
+
+    investTopUpBtn.addEventListener('click', () => {
+        if (!investActive || investPrice <= 0) {
+            alert('Сперва начните инвестицию.');
+            return;
+        }
+        const input = prompt('Дополнительно инвестировать очков:');
+        if (!input) return;
+        const amount = parseFloat(input.replace(',', '.'));
+        if (!isFinite(amount) || amount <= 0) {
+            alert('Некорректная сумма.');
+            return;
+        }
+        if (amount > balance) {
+            alert('Недостаточно очков на балансе.');
+            return;
+        }
+        topUpInvestment(amount);
     });
 
     investWithdrawBtn.addEventListener('click', () => {
@@ -1745,10 +1912,15 @@
         investActive = false;
         investShares = 0;
         investAmount = 0;
+        investPrice = 0;
+        investHistory = [];
         updateInvestUI();
+        drawInvestChart();
+        investPanelEl.style.display = 'none';
 
         balance += value;
         updateBalanceUI();
+        scheduleSaveState();
 
         alert('Инвестиция выведена: ' + value.toFixed(1) + ' pts');
     });
@@ -1764,12 +1936,17 @@
             investHistory.length - 1,
             Math.max(0, Math.round((x / w) * (investHistory.length - 1)))
         );
-        const price = investHistory[idx];
+        const point = investHistory[idx];
+        const price = point.price;
+
+        const d = new Date(point.t);
+        const timeStr = d.getHours().toString().padStart(2,'0') + ':' +
+                        d.getMinutes().toString().padStart(2,'0');
 
         investTooltip.style.opacity = '1';
         investTooltip.style.left = x + 'px';
         investTooltip.style.top  = '10px';
-        investTooltip.textContent = price.toFixed(2);
+        investTooltip.textContent = price.toFixed(2) + ' • ' + timeStr;
     });
 
     investCanvas.addEventListener('pointerleave', () => {
@@ -1804,16 +1981,228 @@
         });
     }
 
-    // ===== 13. Init App =====
-    function initApp() {
-        initUserInfo();
+    // ===== 13. Gift Spawn =====
+    let giftTimeout = null;
+    let currentGiftEl = null;
+
+    function scheduleGiftSpawn() {
+        // от 30 минут до 2 часов
+        const min = 30 * 60 * 1000;
+        const max = 120 * 60 * 1000;
+        const delay = min + Math.random() * (max - min);
+
+        if (giftTimeout) clearTimeout(giftTimeout);
+        giftTimeout = setTimeout(spawnGift, delay);
+    }
+
+    function spawnGift() {
+        if (!coinEl) return;
+        if (currentGiftEl) {
+            currentGiftEl.remove();
+            currentGiftEl = null;
+        }
+
+        const gift = document.createElement('div');
+        gift.className = 'gift-box';
+        gift.textContent = '🎁';
+
+        // позиционируем "слева чуть выше" относительно монеты
+        gift.style.left = '10%';
+        gift.style.top = '8%';
+
+        coinEl.appendChild(gift);
+        currentGiftEl = gift;
+
+        if (window.gsap) {
+            gsap.fromTo(gift,
+                {opacity: 0, y: -10, scale: 0.6},
+                {opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.6)'});
+        } else {
+            gift.style.opacity = '1';
+        }
+
+        gift.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            claimGiftReward(e, gift);
+        }, { once: true });
+    }
+
+    function claimGiftReward(event, gift) {
+        const reward = Math.floor(10 + Math.random() * (500 - 10 + 1));
+
+        // добавляем очки
+        balance = +(balance + reward).toFixed(2);
+        updateBalanceUI();
+        scheduleSaveState();
+
+        // анимация суммы из точки подарка
+        const rect = gift.getBoundingClientRect();
+        const rootRect = document.body.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2 - rootRect.left;
+        const centerY = rect.top + rect.height / 2 - rootRect.top;
+
+        const float = document.createElement('div');
+        float.className = 'gift-float';
+        float.textContent = reward.toString();
+        float.style.left = centerX + 'px';
+        float.style.top  = centerY + 'px';
+
+        document.body.appendChild(float);
+
+        if (window.gsap) {
+            gsap.fromTo(float,
+                {opacity: 1, y: 0},
+                {
+                    opacity: 0,
+                    y: -40,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    onComplete: () => float.remove()
+                });
+        } else {
+            float.style.opacity = '1';
+            setTimeout(() => float.remove(), 800);
+        }
+
+        // убираем подарок
+        if (window.gsap) {
+            gsap.to(gift, {
+                opacity: 0,
+                scale: 0.7,
+                duration: 0.25,
+                ease: 'power1.in',
+                onComplete: () => {
+                    gift.remove();
+                    currentGiftEl = null;
+                }
+            });
+        } else {
+            gift.remove();
+            currentGiftEl = null;
+        }
+
+        // запланировать следующее появление
+        scheduleGiftSpawn();
+    }
+
+    // ===== 14. Cloud Save / Load =====
+    let saveTimeout = null;
+
+    function serializePlayerState() {
+        return {
+            balance,
+            perTap,
+            totalTaps,
+            upgrades: Object.fromEntries(upgrades.map(u => [u.id, !!u.unlocked])),
+            tasks: Object.fromEntries(tasks.map(t => [t.id, t.status])),
+            invest: {
+                active: investActive,
+                amount: investAmount,
+                price: investPrice,
+                shares: investShares
+            }
+        };
+    }
+
+    function applyPlayerState(data) {
+        if (!data) return;
+
+        if (typeof data.balance === 'number') balance = data.balance;
+        if (typeof data.perTap === 'number') perTap = data.perTap;
+        if (typeof data.totalTaps === 'number') totalTaps = data.totalTaps;
+
+        if (data.upgrades) {
+            upgrades.forEach(u => {
+                u.unlocked = !!data.upgrades[u.id];
+            });
+        }
+
+        if (data.tasks) {
+            tasks.forEach(t => {
+                if (data.tasks[t.id]) t.status = data.tasks[t.id];
+            });
+        }
+
+        // бонус по задачам: считаем по статусам
+        tasksBonusGiven = tasks.every(t => t.status === 'completed');
+
+        if (data.invest) {
+            investActive = !!data.invest.active;
+            investAmount = data.invest.amount || 0;
+            investPrice  = data.invest.price  || 0;
+            investShares = data.invest.shares || 0;
+            investHistory = [];
+            if (investPrice > 0) {
+                investHistory.push({ t: Date.now(), price: investPrice });
+            }
+            if (investActive && investAmount > 0 && investPrice > 0) {
+                investPanelEl.style.display = 'block';
+                drawInvestChart();
+                startInvestSimulation();
+            } else {
+                investPanelEl.style.display = 'none';
+            }
+        }
+
         updateBalanceUI();
         updateTapInfoUI();
+        renderUpgrades();
+        renderTasks();
+        updateInvestUI();
+    }
+
+    async function loadPlayerState() {
+        if (!tg) return;
+        try {
+            const res = await fetch(PLAYER_STATE_API, {
+                method: 'GET',
+                headers: {
+                    'X-Telegram-Init-Data': tg.initData
+                }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            applyPlayerState(data);
+        } catch (e) {
+            console.warn('loadPlayerState failed', e);
+        }
+    }
+
+    async function savePlayerState() {
+        if (!tg) return;
+        saveTimeout = null;
+        try {
+            const body = JSON.stringify(serializePlayerState());
+            await fetch(PLAYER_STATE_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-Init-Data': tg.initData
+                },
+                body
+            });
+        } catch (e) {
+            console.warn('savePlayerState failed', e);
+        }
+    }
+
+    function scheduleSaveState() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(savePlayerState, 1500);
+    }
+
+    // ===== 15. Init App =====
+    function initApp() {
+        initUserInfo();
         renderTasks();
         renderUpgrades();
+        updateBalanceUI();
+        updateTapInfoUI();
         loadLeaderboard();
         initSnow();
         moveNavIndicator(0);
+        loadPlayerState();
+        scheduleGiftSpawn();
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
