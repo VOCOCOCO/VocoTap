@@ -2,15 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Tap Glass</title>
+    <title>V Coin Tap</title>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- GSAP для анимаций вкладок и бегунка -->
+    <!-- GSAP для плавных анимаций -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- particles.js для снега -->
+    <!-- Снег -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
     <style>
@@ -55,7 +55,7 @@
             overflow: hidden;
         }
 
-        /* Снег позади всего */
+        /* Снег за всем */
         #snow {
             position: fixed;
             inset: 0;
@@ -73,7 +73,7 @@
             padding: 10px 12px 20px;
         }
 
-        /* HEADER — минимализм */
+        /* HEADER */
         .app-header {
             display: flex;
             align-items: center;
@@ -97,10 +97,14 @@
         .app-logo {
             width: 26px;
             height: 26px;
-            border-radius: 50%;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.4);
             background: radial-gradient(circle at 30% 30%,
             #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
-            border: 1px solid rgba(255,255,255,0.5);
+            background-size: cover;
+            background-position: center;
+            /* TODO: сюда можно поставить своё лого:
+               background-image: url('logo.png'); */
         }
 
         .app-title-block {
@@ -189,7 +193,7 @@
             -webkit-backdrop-filter: blur(26px);
         }
 
-        /* HOME — как W-Coin: большая монета по центру */
+        /* HOME */
         .home-wrapper {
             height: 100%;
             display: flex;
@@ -197,6 +201,10 @@
             align-items: center;
             justify-content: center;
             gap: 18px;
+        }
+
+        .home-balance {
+            text-align: center;
         }
 
         .home-balance-label {
@@ -212,108 +220,28 @@
             letter-spacing: 0.06em;
         }
 
-        .home-balance {
-            text-align: center;
-        }
-
+        /* чистая монета-картинка */
         .coin-wrapper {
-            position: relative;
             width: 210px;
             height: 210px;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            -webkit-user-select: none;
             user-select: none;
-        }
-
-        .coin-glow {
-            position: absolute;
-            inset: 10px;
-            border-radius: inherit;
-            background: radial-gradient(circle at 30% 0,
-            rgba(159, 209, 255, 0.7), rgba(4, 8, 24, 0));
-            filter: blur(6px);
-            opacity: 0.75;
-        }
-
-        .coin-plate {
+            cursor: pointer;
             position: relative;
-            inset: 0;
-            border-radius: inherit;
-            overflow: hidden;
-            box-shadow:
-                    0 0 34px rgba(104, 179, 255, 0.55),
-                    0 18px 40px rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(255,255,255,0.35);
-            transform: perspective(700px) rotateX(12deg) rotateY(-10deg);
-            background: radial-gradient(circle at 30% 30%,
-            #e6f3ff, #9fd1ff 35%, #1f68ff 60%, #040818 95%);
         }
 
-        .coin-inner {
-            position: absolute;
-            inset: 23%;
-            border-radius: inherit;
-            background: radial-gradient(circle at 30% 20%,
-            #f6fbff, #bfdcff 50%, #2659d8 100%);
-            border: 1px solid rgba(255,255,255,0.7);
-            box-shadow: inset 0 0 16px rgba(0,0,0,0.4);
+        .coin-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            transition: transform 0.12s ease;
         }
 
-        .coin-highlight-ring {
-            position: absolute;
-            inset: 9%;
-            border-radius: inherit;
-            border: 1px solid rgba(255,255,255,0.5);
-            opacity: 0.7;
-        }
-
-        .coin-letter {
-            position: absolute;
-            inset: 27%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 74px;
-            color: rgba(6, 20, 60, 0.9);
-            text-shadow:
-                    0 1px 0 rgba(255,255,255,0.7),
-                    0 -2px 3px rgba(0,0,0,0.55),
-                    0 0 24px rgba(255,255,255,0.6);
-        }
-
-        .coin-glare {
-            position: absolute;
-            top: -15%;
-            left: -12%;
-            width: 70%;
-            height: 45%;
-            border-radius: 60%;
-            background: linear-gradient(135deg,
-            rgba(255,255,255,0.8), transparent 60%);
-            filter: blur(8px);
-            opacity: 0.8;
-        }
-
-        .coin-wrapper:active .coin-plate {
-            transform: perspective(700px) rotateX(16deg) rotateY(-6deg) scale(0.97);
-            box-shadow:
-                    0 0 28px rgba(104, 179, 255, 0.50),
-                    0 12px 30px rgba(0, 0, 0, 0.9);
-        }
-
-        .coin-wrapper.tap-anim .coin-plate {
-            animation: pulse 0.18s ease-out;
-        }
-
-        @keyframes pulse {
-            0%   { transform: perspective(700px) rotateX(12deg) rotateY(-10deg) scale(1); }
-            50%  { transform: perspective(700px) rotateX(16deg) rotateY(-7deg) scale(0.96); }
-            100% { transform: perspective(700px) rotateX(12deg) rotateY(-10deg) scale(1); }
+        .coin-wrapper.tap-anim .coin-img {
+            transform: scale(0.92);
         }
 
         .home-note {
@@ -323,16 +251,17 @@
 
         .tap-float {
             position: absolute;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #ffffff;
-            text-shadow: 0 0 8px rgba(0,0,0,0.7);
+            text-shadow: 0 0 6px rgba(0,0,0,0.6);
             pointer-events: none;
             opacity: 0;
         }
 
         /* TASKS */
         .tasks-hero {
+            position: relative;
             margin-bottom: 10px;
             border-radius: var(--radius-lg);
             overflow: hidden;
@@ -347,6 +276,24 @@
             font-weight: 600;
             letter-spacing: 0.12em;
             text-transform: uppercase;
+        }
+
+        .tasks-hero::before,
+        .tasks-hero::after {
+            content: "❄";
+            position: absolute;
+            font-size: 28px;
+            opacity: 0.7;
+        }
+
+        .tasks-hero::before {
+            top: 10px;
+            left: 14px;
+        }
+
+        .tasks-hero::after {
+            bottom: 10px;
+            right: 18px;
         }
 
         .tasks-card {
@@ -492,7 +439,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .lb-rank-circle {
@@ -566,11 +513,29 @@
             background: linear-gradient(135deg,
             rgba(255,255,255,0.03), rgba(7,10,26,0.95));
             font-size: 11px;
+            margin-bottom: 6px;
         }
 
         .lb-row-rank { width: 22px; text-align: center; color: var(--text-soft); }
-        .lb-row-name { flex: 1; }
-        .lb-row-score { font-weight: 500; }
+
+        .lb-row-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .lb-row-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .lb-row-nameblock { flex: 1; }
+        .lb-row-name { font-size: 12px; }
+        .lb-row-score { font-weight: 500; text-align: right; }
         .lb-row-score span { font-size: 10px; color: var(--accent-soft); }
 
         .lb-row.you {
@@ -580,15 +545,30 @@
         }
 
         .lb-footer-note {
-            margin-top: 6px;
+            margin-top: 4px;
             font-size: 10px;
             color: var(--text-muted);
             text-align: center;
         }
 
+        .lb-remind {
+            margin-top: 6px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .lb-remind .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         /* UPGRADES */
         .up-card {
             padding: 12px 12px 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .up-header {
@@ -693,6 +673,88 @@
             transform: none;
         }
 
+        /* INVEST BLOCK */
+        .invest-card {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.22);
+            background: linear-gradient(135deg,
+            rgba(255,255,255,0.08), rgba(8,12,30,0.95));
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .invest-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 12px;
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            flex-shrink: 0;
+        }
+
+        .invest-main {
+            flex: 1;
+        }
+
+        .invest-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .invest-text {
+            font-size: 11px;
+            color: var(--text-soft);
+            margin-top: 1px;
+        }
+
+        .invest-panel {
+            margin-top: 8px;
+            padding: 8px 10px 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.2);
+            background: radial-gradient(circle at top,
+            rgba(255,255,255,0.08), rgba(4,7,20,0.98));
+        }
+
+        .invest-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 11px;
+            color: var(--text-soft);
+            margin-bottom: 4px;
+        }
+
+        .invest-info-row strong {
+            color: var(--text-main);
+        }
+
+        .invest-chart-wrap {
+            position: relative;
+            margin-top: 4px;
+        }
+
+        #investChart {
+            width: 100%;
+            height: 140px;
+            display: block;
+        }
+
+        .invest-tooltip {
+            position: absolute;
+            padding: 4px 6px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.8);
+            font-size: 10px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+        }
+
         /* BOTTOM NAV */
         .bottom-nav-wrap {
             padding: 8px 14px 4px;
@@ -774,6 +836,7 @@
 
         @media (max-height: 640px) {
             .coin-wrapper { width: 185px; height: 185px; }
+            #investChart { height: 120px; }
         }
     </style>
 </head>
@@ -806,18 +869,14 @@
             <div class="home-wrapper">
                 <div class="home-balance">
                     <div class="home-balance-label">Ваш баланс</div>
-                    <div class="home-balance-value"><span id="balanceValue">0.0</span> pts</div>
+                    <div class="home-balance-value">
+                        <span id="balanceValue">0.0</span> pts
+                    </div>
                 </div>
 
                 <div class="coin-wrapper" id="coin">
-                    <div class="coin-glow"></div>
-                    <div class="coin-plate">
-                        <!-- Сюда можно поставить свою PNG монеты -->
-                        <div class="coin-highlight-ring"></div>
-                        <div class="coin-inner"></div>
-                        <div class="coin-letter">V</div>
-                        <div class="coin-glare"></div>
-                    </div>
+                    <!-- TODO: сюда ставишь своё PNG -->
+                    <img src="coin.png" class="coin-img" alt="coin">
                 </div>
 
                 <div class="home-note">
@@ -828,9 +887,7 @@
 
         <!-- TASKS -->
         <section class="screen" id="screen-tasks" data-tab="tasks">
-            <div class="tasks-hero">
-                Tasks
-            </div>
+            <div class="tasks-hero">Tasks</div>
 
             <div class="glass-card tasks-card">
                 <div class="tasks-card-title">Tasks:</div>
@@ -843,8 +900,8 @@
             <div class="glass-card lb-card">
                 <div class="lb-header">
                     <div class="lb-title-block">
-                        <div class="lb-title">Лидерборд</div>
-                        <div class="lb-subtitle">Топ игроков по очкам</div>
+                        <div class="lb-title">Топ лига</div>
+                        <div class="lb-subtitle">Топ 10 тапперов</div>
                     </div>
                     <button class="btn" id="refreshLeaderboardBtn">Обновить</button>
                 </div>
@@ -856,28 +913,65 @@
                         <div class="lb-user-name" id="lbUserName">You</div>
                         <div class="lb-user-handle" id="lbUserHandle">@you</div>
                     </div>
-                    <div class="lb-user-score" id="lbUserScore">0.0<span> pts</span></div>
+                    <div class="lb-user-score" id="lbUserScore">
+                        0.0<span> pts</span>
+                    </div>
                 </div>
 
                 <div class="lb-list" id="lbList"></div>
+
                 <div class="lb-footer-note">
-                    Данные приходят с сервера по initData. Пока используется демо-режим.
+                    Если сервер недоступен — показываются демо-игроки user1…user10.
+                </div>
+
+                <div class="lb-remind">
+                    <button class="btn" id="remindBtn">
+                        🏆 Напомнить пользователям
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- UPGRADES -->
+        <!-- UPGRADES + INVEST -->
         <section class="screen" id="screen-upgrades" data-tab="upgrades">
             <div class="glass-card up-card">
                 <div class="up-header">
-                    <div class="up-title">Апгрейды</div>
-                    <div class="up-subtitle">Увеличивай очки за тап через Stars</div>
+                    <div class="up-title">Бусты</div>
+                    <div class="up-subtitle">Увеличивай доход за тап через Stars</div>
                 </div>
                 <div class="up-info">
-                    Покупка проходит через <b>openInvoice</b>. После успешной оплаты апгрейд сразу активируется.
+                    Оплата происходит через <b>Telegram.WebApp.openInvoice</b>. Третий буст даёт +0.9 к тапу.
                 </div>
 
                 <div class="up-list" id="upgradesList"></div>
+
+                <!-- INVEST BLOCK -->
+                <div class="invest-card">
+                    <div class="invest-logo"></div>
+                    <div class="invest-main">
+                        <div class="invest-title">Вложитесь в инвестиции</div>
+                        <div class="invest-text">
+                            Инвестируйте часть очков и наблюдайте за динамикой цены. Риск — как у крипты.
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" id="investStartBtn">Начать</button>
+                </div>
+
+                <div class="invest-panel" id="investPanel">
+                    <div class="invest-info-row">
+                        <div>Инвестировано: <strong><span id="investAmount">0.0</span> pts</strong></div>
+                        <div>Текущая цена: <strong><span id="investPriceLabel">—</span></strong></div>
+                    </div>
+                    <div class="invest-info-row">
+                        <div>Текущая стоимость: <strong><span id="investValueLabel">0.0</span> pts</strong></div>
+                        <button class="btn" id="investWithdrawBtn">Вывести</button>
+                    </div>
+
+                    <div class="invest-chart-wrap">
+                        <canvas id="investChart"></canvas>
+                        <div class="invest-tooltip" id="investTooltip"></div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -936,7 +1030,7 @@
 </div>
 
 <script>
-    // ============ 1. Telegram Init ============
+    // ===== 1. Telegram Init =====
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
         tg.ready();
@@ -946,40 +1040,47 @@
     const initDataUnsafe = tg ? tg.initDataUnsafe : {};
     const currentUser = initDataUnsafe.user || null;
 
-    // ============ 2. Game State ============
+    // ===== 2. Game State =====
     let balance = 0.0;
     let perTap = 0.1;      // базовые очки за тап
-    let tapMultiplier = 1; // множитель от апгрейдов
+    let tapMultiplier = 1; // множитель от бустов
     let totalTaps = 0;
     let sessionTaps = 0;
 
+    // бонус за все задачи
+    let tasksBonusGiven = false;
+
+    // boosts: ТРЕТИЙ (индекс 2) даёт +0.9 к тапу
     const upgrades = [
         {
-            id: 'tap_plus_01',
+            id: 'boost_small',
             title: '+0.1 к тапу',
             description: 'Небольшой, но стабильный прирост очков за каждый тап.',
             priceStars: 10,
             levelLabel: 'Common',
             unlocked: false,
+            invoiceLink: 'https://t.me/your_bot?start=boost_small', // TODO
             effect: () => { perTap += 0.1; }
         },
         {
-            id: 'tap_plus_03',
+            id: 'boost_medium',
             title: '+0.3 к тапу',
             description: 'Серьёзный прирост очков, идеально для активных игроков.',
             priceStars: 25,
             levelLabel: 'Rare',
             unlocked: false,
+            invoiceLink: 'https://t.me/your_bot?start=boost_medium', // TODO
             effect: () => { perTap += 0.3; }
         },
         {
-            id: 'tap_x2',
-            title: 'x2 множитель',
-            description: 'Умножает текущие очки за тап на 2.',
+            id: 'boost_big',
+            title: '+0.9 к тапу',
+            description: 'Мощный буст. При покупке этого буста вы получаете +0.9 к тапу.',
             priceStars: 60,
-            levelLabel: 'Epic',
+            levelLabel: 'Legendary',
             unlocked: false,
-            effect: () => { tapMultiplier *= 2; }
+            invoiceLink: 'https://t.me/your_bot?start=boost_big', // TODO третий буст
+            effect: () => { perTap += 0.9; }
         }
     ];
 
@@ -989,7 +1090,7 @@
             title: 'Подпишитесь на основной канал',
             bonusLabel: '+10% шанс',
             link: 'https://t.me/your_channel',
-            status: 'new' // new | pending | completed
+            status: 'new'
         },
         {
             id: 'task_open_market',
@@ -1018,9 +1119,9 @@
     const API_BASE = 'https://your-backend.com';
     const LEADERBOARD_API = API_BASE + '/api/leaderboard';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
-    const INVOICE_BASE_URL = 'https://t.me/your_bot?start=invoice';
+    const REMIND_LINK = 'https://t.me/your_channel'; // TODO ссылка "Напомнить пользователям"
 
-    // ============ 3. DOM ============
+    // ===== 3. DOM =====
     const balanceValueEl = document.getElementById('balanceValue');
     const perTapLabelEl  = document.getElementById('perTapLabel');
     const sessionStatEl  = document.getElementById('sessionStat');
@@ -1037,6 +1138,7 @@
     const lbUserScoreEl  = document.getElementById('lbUserScore');
     const lbListEl       = document.getElementById('lbList');
     const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
+    const remindBtn      = document.getElementById('remindBtn');
 
     const upgradesListEl = document.getElementById('upgradesList');
 
@@ -1044,7 +1146,17 @@
     const screens        = Array.from(document.querySelectorAll('.screen'));
     const navIndicatorEl = document.getElementById('navIndicator');
 
-    // ============ 4. User Info ============
+    // invest DOM
+    const investStartBtn     = document.getElementById('investStartBtn');
+    const investPanelEl      = document.getElementById('investPanel');
+    const investAmountEl     = document.getElementById('investAmount');
+    const investPriceLabelEl = document.getElementById('investPriceLabel');
+    const investValueLabelEl = document.getElementById('investValueLabel');
+    const investWithdrawBtn  = document.getElementById('investWithdrawBtn');
+    const investCanvas       = document.getElementById('investChart');
+    const investTooltip      = document.getElementById('investTooltip');
+
+    // ===== 4. User Info =====
     function initUserInfo() {
         if (currentUser) {
             const name = [currentUser.first_name, currentUser.last_name].filter(Boolean).join(' ');
@@ -1069,12 +1181,12 @@
         }
     }
 
-    // ============ 5. UI Helpers ============
+    // ===== 5. UI Helpers =====
     function currentPerTap() {
         return +(perTap * tapMultiplier).toFixed(2);
     }
 
-    function updateBalanceUI(diff = 0) {
+    function updateBalanceUI() {
         balanceValueEl.textContent = balance.toFixed(1);
         sessionStatEl.textContent  = `${sessionTaps} taps`;
         lbUserScoreEl.innerHTML    = `${balance.toFixed(1)}<span> pts</span>`;
@@ -1085,17 +1197,16 @@
     }
 
     function createTapFloat(x, y, amount) {
-        const rect = coinEl.getBoundingClientRect();
-        const wrapperRect = coinEl.getBoundingClientRect();
-
         const span = document.createElement('div');
         span.className = 'tap-float';
-        const localX = x - wrapperRect.left;
-        const localY = y - wrapperRect.top;
+        span.textContent = '+' + amount.toFixed(1);
+
+        const rect = coinEl.getBoundingClientRect();
+        const localX = x - rect.left;
+        const localY = y - rect.top;
 
         span.style.left = localX + 'px';
         span.style.top  = localY + 'px';
-        span.textContent = `+${amount.toFixed(1)}`;
 
         coinEl.appendChild(span);
 
@@ -1115,9 +1226,8 @@
         }
     }
 
-    // ============ 6. Tap Logic ============
+    // ===== 6. Tap Logic =====
     function handleTap(event) {
-        // Вибрация
         if (navigator.vibrate) {
             navigator.vibrate(10);
         }
@@ -1127,18 +1237,16 @@
         totalTaps += 1;
         sessionTaps += 1;
 
-        updateBalanceUI(gain);
+        updateBalanceUI();
         createTapFloat(event.clientX, event.clientY, gain);
 
         coinEl.classList.add('tap-anim');
-        setTimeout(() => coinEl.classList.remove('tap-anim'), 180);
-
-        // TODO: сюда можно добавить отправку статистики на сервер
+        setTimeout(() => coinEl.classList.remove('tap-anim'), 150);
     }
 
     coinEl.addEventListener('click', handleTap);
 
-    // ============ 7. Tabs + GSAP ============
+    // ===== 7. Tabs + GSAP =====
     function setActiveTab(tabName) {
         screens.forEach(screen => {
             const isActive = screen.dataset.tab === tabName;
@@ -1148,12 +1256,8 @@
                     autoAlpha: isActive ? 1 : 0,
                     x: isActive ? 0 : 18,
                     ease: 'power2.out',
-                    onStart: () => {
-                        if (isActive) screen.classList.add('active');
-                    },
-                    onComplete: () => {
-                        if (!isActive) screen.classList.remove('active');
-                    }
+                    onStart: () => { if (isActive) screen.classList.add('active'); },
+                    onComplete: () => { if (!isActive) screen.classList.remove('active'); }
                 });
             } else {
                 screen.classList.toggle('active', isActive);
@@ -1187,7 +1291,7 @@
         });
     });
 
-    // ============ 8. Tasks ============
+    // ===== 8. Tasks =====
     function renderTasks() {
         tasksListEl.innerHTML = '';
 
@@ -1225,9 +1329,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'task-btn';
                 btn.textContent = 'Начать';
-                btn.addEventListener('click', () => {
-                    startTask(task);
-                });
+                btn.addEventListener('click', () => startTask(task));
                 actionWrap.appendChild(btn);
             }
 
@@ -1246,8 +1348,17 @@
             window.open(task.link, '_blank');
         }
         task.status = 'pending';
-        // Когда пользователь вернётся в мини-апп — засчитываем
         renderTasks();
+    }
+
+    function checkTasksBonus() {
+        if (tasksBonusGiven) return;
+        const allDone = tasks.every(t => t.status === 'completed');
+        if (allDone) {
+            perTap += 0.2; // бонус за все задания
+            tasksBonusGiven = true;
+            updateTapInfoUI();
+        }
     }
 
     function completePendingTasks() {
@@ -1255,12 +1366,12 @@
         tasks.forEach(task => {
             if (task.status === 'pending') {
                 task.status = 'completed';
-                // при желании можно добавить награду в очках
                 changed = true;
             }
         });
         if (changed) {
             renderTasks();
+            checkTasksBonus();
         }
     }
 
@@ -1270,7 +1381,7 @@
         }
     });
 
-    // ============ 9. Leaderboard ============
+    // ===== 9. Leaderboard =====
     async function loadLeaderboard() {
         lbListEl.innerHTML = '';
         const loading = document.createElement('div');
@@ -1292,81 +1403,103 @@
             if (!res.ok) throw new Error('HTTP ' + res.status);
             const data = await res.json();
 
-            const you = (data && data.you) || {rank: '-', score: balance};
-            const top = (data && data.top) || [];
+            // ожидаемый формат:
+            // {
+            //   you: { rank, score, username, photo_url },
+            //   top: [{ rank, score, username, photo_url }, ...]
+            // }
+
+            const you = (data && data.you) || {rank: '-', score: balance, username: currentUser?.username};
+            const top = (data && data.top || []).slice(0, 10);
 
             lbUserRankEl.textContent = you.rank || '-';
             lbUserScoreEl.innerHTML = `${(you.score ?? 0).toFixed(1)}<span> pts</span>`;
 
             lbListEl.innerHTML = '';
+            if (!top.length) {
+                throw new Error('No top data');
+            }
+
             top.forEach(entry => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
+
                 if (you.rank && entry.rank === you.rank) row.classList.add('you');
 
                 const rank = document.createElement('div');
                 rank.className = 'lb-row-rank';
                 rank.textContent = entry.rank ?? '-';
 
+                const avatarWrap = document.createElement('div');
+                avatarWrap.className = 'lb-row-avatar';
+                if (entry.photo_url) {
+                    const img = document.createElement('img');
+                    img.src = entry.photo_url;
+                    avatarWrap.appendChild(img);
+                }
+
+                const nameBlock = document.createElement('div');
+                nameBlock.className = 'lb-row-nameblock';
+
                 const name = document.createElement('div');
                 name.className = 'lb-row-name';
-                name.textContent = entry.name || 'Player';
+                name.textContent = entry.username ? '@' + entry.username : (entry.name || 'User');
+
+                nameBlock.appendChild(name);
 
                 const score = document.createElement('div');
                 score.className = 'lb-row-score';
                 score.innerHTML = `${(entry.score ?? 0).toFixed(1)}<span> pts</span>`;
 
                 row.appendChild(rank);
-                row.appendChild(name);
+                row.appendChild(avatarWrap);
+                row.appendChild(nameBlock);
                 row.appendChild(score);
+
                 lbListEl.appendChild(row);
             });
-
-            if (!top.length) {
-                const empty = document.createElement('div');
-                empty.style.fontSize = '11px';
-                empty.style.color = 'var(--text-soft)';
-                empty.style.textAlign = 'center';
-                empty.style.paddingTop = '8px';
-                empty.textContent = 'Пока в топе никого нет. Будь первым!';
-                lbListEl.appendChild(empty);
-            }
         } catch (e) {
             console.warn('Leaderboard load failed, demo mode', e);
             lbListEl.innerHTML = '';
-            const demo = [
-                {rank: 1, name: 'GlassLord', score: 4200},
-                {rank: 2, name: 'TapWizard', score: 3800},
-                {rank: 3, name: 'BlueGhost', score: 3500},
-                {rank: 4, name: 'NightShift', score: 3100},
-                {rank: 5, name: 'MoonTapper', score: 2700},
-                {rank: 6, name: 'SnowCoin', score: 2300},
-                {rank: 7, name: 'You', score: balance}
-            ];
 
-            lbUserRankEl.textContent = '7';
+            const demo = [];
+            for (let i = 1; i <= 10; i++) {
+                demo.push({rank: i, username: 'user' + i, score: 1000 - i * 37});
+            }
+
+            lbUserRankEl.textContent = '10';
             lbUserScoreEl.innerHTML = `${balance.toFixed(1)}<span> pts</span>`;
 
             demo.forEach(entry => {
                 const row = document.createElement('div');
                 row.className = 'lb-row';
-                if (entry.name === 'You') row.classList.add('you');
+                if (entry.username === 'user10') row.classList.add('you');
 
                 const rank = document.createElement('div');
                 rank.className = 'lb-row-rank';
                 rank.textContent = entry.rank;
 
+                const avatarWrap = document.createElement('div');
+                avatarWrap.className = 'lb-row-avatar';
+
+                const nameBlock = document.createElement('div');
+                nameBlock.className = 'lb-row-nameblock';
+
                 const name = document.createElement('div');
                 name.className = 'lb-row-name';
-                name.textContent = entry.name;
+                name.textContent = '@' + entry.username;
+
+                nameBlock.appendChild(name);
 
                 const score = document.createElement('div');
                 score.className = 'lb-row-score';
-                score.innerHTML = `${entry.score.toFixed ? entry.score.toFixed(1) : entry.score}<span> pts</span>`;
+                score.innerHTML = `${entry.score.toFixed(1)}<span> pts</span>`;
 
                 row.appendChild(rank);
-                row.appendChild(name);
+                row.appendChild(avatarWrap);
+                row.appendChild(nameBlock);
                 row.appendChild(score);
+
                 lbListEl.appendChild(row);
             });
         }
@@ -1374,7 +1507,14 @@
 
     refreshLeaderboardBtn.addEventListener('click', loadLeaderboard);
 
-    // ============ 10. Upgrades + openInvoice ============
+    remindBtn.addEventListener('click', () => {
+        if (tg) tg.openTelegramLink(REMIND_LINK);
+        else window.open(REMIND_LINK, '_blank');
+    });
+
+    // ===== 10. Upgrades + openInvoice(invoice_link) =====
+    let pendingUpgradeId = null;
+
     function renderUpgrades() {
         upgradesListEl.innerHTML = '';
 
@@ -1436,28 +1576,37 @@
         renderUpgrades();
     }
 
-    async function openUpgradeInvoice(upg) {
+    function openUpgradeInvoice(upg) {
         if (!tg) {
             alert('Оплата через Stars работает только внутри Telegram.');
             return;
         }
 
-        const url = `${INVOICE_BASE_URL}_${encodeURIComponent(upg.id)}`;
+        pendingUpgradeId = upg.id;
 
-        tg.openInvoice(url, async (status) => {
-            if (status === 'paid') {
-                try {
-                    await fetch(UPGRADE_APPLY_API, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Telegram-Init-Data': tg.initData
-                        },
-                        body: JSON.stringify({upgrade_id: upg.id})
-                    });
-                } catch (e) {
-                    console.warn('Не удалось отправить апгрейд на сервер, но локально засчитываем', e);
-                }
+        // 💳 ОТКРЫТИЕ ИНВОЙСА ЧЕРЕЗ ОФИЦИАЛЬНЫЙ МЕТОД
+        tg.openInvoice(upg.invoiceLink);
+    }
+
+    if (tg) {
+        tg.onEvent('invoiceClosed', (e) => {
+            if (!pendingUpgradeId) return;
+
+            const upg = upgrades.find(u => u.id === pendingUpgradeId);
+            pendingUpgradeId = null;
+
+            if (!upg) return;
+
+            if (e.status === 'paid') {
+                // можно уведомить сервер
+                fetch(UPGRADE_APPLY_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Telegram-Init-Data': tg.initData
+                    },
+                    body: JSON.stringify({upgrade_id: upg.id})
+                }).catch(() => {});
 
                 applyUpgrade(upg);
 
@@ -1466,7 +1615,7 @@
                     message: `${upg.title} теперь работает!`,
                     buttons: [{id: 'ok', type: 'default', text: 'Ок'}]
                 });
-            } else if (status === 'failed') {
+            } else if (e.status === 'failed') {
                 tg.showPopup({
                     title: 'Ошибка оплаты',
                     message: 'Не удалось оплатить инвойс. Попробуйте ещё раз.',
@@ -1476,7 +1625,158 @@
         });
     }
 
-    // ============ 11. Snow (particles.js) ============
+    // ===== 11. Инвестиции + график =====
+    let investActive = false;
+    let investAmount = 0;   // сколько очков вложено
+    let investPrice = 0;    // текущая цена "монеты"
+    let investShares = 0;   // количество "долей"
+    let investHistory = []; // массив цен
+    let investInterval = null;
+
+    function updateInvestUI() {
+        investAmountEl.textContent = investAmount.toFixed(1);
+        if (investPrice > 0) {
+            investPriceLabelEl.textContent = investPrice.toFixed(2);
+        } else {
+            investPriceLabelEl.textContent = '—';
+        }
+        const value = investShares > 0 ? investShares * investPrice : 0;
+        investValueLabelEl.textContent = value.toFixed(1);
+    }
+
+    function pushInvestPoint(price) {
+        investHistory.push(price);
+        if (investHistory.length > 80) investHistory.shift();
+        drawInvestChart();
+    }
+
+    function drawInvestChart() {
+        const canvas = investCanvas;
+        const ctx = canvas.getContext('2d');
+
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        const w = rect.width;
+        const h = rect.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // фон
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#101827');
+        grad.addColorStop(1, '#02030a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        if (investHistory.length < 2) return;
+
+        const min = Math.min(...investHistory);
+        const max = Math.max(...investHistory);
+        const range = Math.max(max - min, 0.0001);
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#5fa8ff';
+        ctx.beginPath();
+
+        investHistory.forEach((p, i) => {
+            const x = (i / (investHistory.length - 1)) * w;
+            const y = h - ((p - min) / range) * (h * 0.9) - h * 0.05;
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+
+        ctx.stroke();
+    }
+
+    function startInvestSimulation() {
+        if (investInterval) clearInterval(investInterval);
+
+        investInterval = setInterval(() => {
+            if (!investActive) return;
+            // случайное изменение от -80% до +80% но помягче
+            const sign = Math.random() < 0.5 ? -1 : 1;
+            const perc = (Math.random() * 0.8 + 0.1); // 0.1%..0.9 но мы воспринимаем как *
+            const factor = 1 + sign * (perc / 100);   // 0.1–0.8% логичное движение
+
+            investPrice *= factor;
+            if (investPrice < 1) investPrice = 1;
+
+            pushInvestPoint(investPrice);
+            updateInvestUI();
+        }, 5000); // каждые 5 секунд маленький шаг — визуально «постепенно»
+    }
+
+    investStartBtn.addEventListener('click', () => {
+        const input = prompt('Введите сумму очков для инвестиций:');
+        if (!input) return;
+        const amount = parseFloat(input.replace(',', '.'));
+        if (!isFinite(amount) || amount <= 0) {
+            alert('Некорректная сумма.');
+            return;
+        }
+        if (amount > balance) {
+            alert('Недостаточно очков на балансе.');
+            return;
+        }
+
+        balance -= amount;
+        updateBalanceUI();
+
+        investActive = true;
+        investAmount = amount;
+        investPrice = 100; // стартовая цена
+        investShares = investAmount / investPrice;
+        investHistory = [investPrice];
+        updateInvestUI();
+        drawInvestChart();
+        startInvestSimulation();
+    });
+
+    investWithdrawBtn.addEventListener('click', () => {
+        if (!investActive || investShares <= 0) {
+            alert('У вас нет активной инвестиции.');
+            return;
+        }
+        const value = investShares * investPrice;
+        investActive = false;
+        investShares = 0;
+        investAmount = 0;
+        updateInvestUI();
+
+        balance += value;
+        updateBalanceUI();
+
+        alert('Инвестиция выведена: ' + value.toFixed(1) + ' pts');
+    });
+
+    // просмотр цены по свайпу/движению
+    investCanvas.addEventListener('pointermove', (e) => {
+        if (!investHistory.length) return;
+
+        const rect = investCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const w = rect.width;
+        const idx = Math.min(
+            investHistory.length - 1,
+            Math.max(0, Math.round((x / w) * (investHistory.length - 1)))
+        );
+        const price = investHistory[idx];
+
+        investTooltip.style.opacity = '1';
+        investTooltip.style.left = x + 'px';
+        investTooltip.style.top  = '10px';
+        investTooltip.textContent = price.toFixed(2);
+    });
+
+    investCanvas.addEventListener('pointerleave', () => {
+        investTooltip.style.opacity = '0';
+    });
+
+    // ===== 12. Snow =====
     function initSnow() {
         if (!window.particlesJS) return;
         particlesJS('snow', {
@@ -1504,7 +1804,7 @@
         });
     }
 
-    // ============ 12. App Init ============
+    // ===== 13. Init App =====
     function initApp() {
         initUserInfo();
         updateBalanceUI();
@@ -1513,8 +1813,6 @@
         renderUpgrades();
         loadLeaderboard();
         initSnow();
-
-        // стартовое положение бегунка
         moveNavIndicator(0);
     }
 
@@ -1522,5 +1820,3 @@
 </script>
 </body>
 </html>
-
-
