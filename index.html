@@ -105,8 +105,6 @@
             #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
             background-size: cover;
             background-position: center;
-            /* сюда вставишь своё лого, если нужно:
-               background-image: url('your-logo.png'); */
         }
 
         .app-title-block {
@@ -418,7 +416,7 @@
             border: 1px solid rgba(0,0,0,0.4);
         }
 
-        /* NEW TOP SCREEN (PROFILE) */
+        /* TOP / PROFILE + ЛИГА */
         .top-card {
             padding: 18px 16px 16px;
             min-height: 100%;
@@ -513,10 +511,120 @@
             max-width: 260px;
         }
 
+        .top-league-wrapper {
+            margin-top: 18px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .top-league-header {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-soft);
+        }
+
+        .top-league-header span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .league-list {
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .league-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .league-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.24);
+            border-radius: 999px;
+        }
+
+        .league-row {
+            display: flex;
+            align-items: center;
+            padding: 7px 9px;
+            border-radius: 16px;
+            background: rgba(4,6,20,0.95);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .league-row.me {
+            border-color: rgba(95,168,255,0.9);
+            box-shadow: 0 0 0 1px rgba(95,168,255,0.4);
+            background: radial-gradient(circle at top left,
+            rgba(95,168,255,0.22), rgba(4,6,20,0.98));
+        }
+
+        .league-rank {
+            width: 26px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .league-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 8px;
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .league-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .league-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .league-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .league-handle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .league-score {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-soft);
+            margin-left: 8px;
+        }
+
+        .league-empty {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 6px 2px;
+        }
+
         /* UPGRADES + INVEST */
         .up-card {
             padding: 12px 12px 10px;
-            /* height:100% убирать, чтобы график не вылезал */
             display: flex;
             flex-direction: column;
         }
@@ -667,7 +775,6 @@
             border: 1px solid rgba(255,255,255,0.2);
             background: radial-gradient(circle at top,
             rgba(255,255,255,0.08), rgba(4,7,20,0.98));
-            /* фикс, чтобы график не вылезал */
             max-height: 260px;
             overflow-y: auto;
             display: none;
@@ -872,6 +979,7 @@
                 </div>
 
                 <div class="coin-wrapper" id="coin">
+                    <!-- замени на путь к своей монете -->
                     <img src="IMG_4943.PNG" class="coin-img" alt="coin">
                 </div>
 
@@ -891,7 +999,7 @@
             </div>
         </section>
 
-        <!-- TOP / PROFILE -->
+        <!-- TOP / PROFILE + ЛИГА -->
         <section class="screen" id="screen-leaderboard" data-tab="leaderboard">
             <div class="glass-card top-card">
                 <div class="top-avatar-wrap">
@@ -913,7 +1021,17 @@
                 </div>
 
                 <div class="top-hint">
-                    Бот получит ваш результат, покажет место в рейтинге и даст посмотреть TOP игроков.
+                    Бот получит ваш результат, а сервер через Cloudflare Worker посчитает место в лиге и TOP игроков.
+                </div>
+
+                <div class="top-league-wrapper">
+                    <div class="top-league-header">
+                        Лига игроков
+                        <span id="leagueSummary">обновление…</span>
+                    </div>
+                    <div class="league-list" id="leagueList">
+                        <!-- сюда подставится список лиги -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -1035,6 +1153,14 @@
 </div>
 
 <script>
+    // ===== 0. Cloudflare Worker API (ЛИГА) =====
+    // ОБЯЗАТЕЛЬНО: замени на свой URL воркера
+    const WORKER_API_BASE = 'https://your-worker-url.workers.dev';
+
+    // ожидаем такие роуты на воркере:
+    // POST  /league/submit   -> принимает {telegram_id, name, username, score, photo_url?}
+    // GET   /league/top?telegram_id=XXX&limit=50 -> отдаёт {top:[{telegram_id,name,username,score,rank,photo_url?}], me:{...}} (произвольно, главное — массив top)
+
     // ===== 1. Telegram Init =====
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
     if (tg) {
@@ -1203,7 +1329,7 @@
         }
     ];
 
-    // API-заглушки
+    // API для сохранения состояния (опционально, можно не трогать)
     const API_BASE = 'http://localhost:3000';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
     const PLAYER_STATE_API  = API_BASE + '/api/player/state';
@@ -1218,12 +1344,15 @@
 
     const tasksListEl    = document.getElementById('tasksList');
 
-    // топ-вкладка
+    // ТОП / ЛИГА DOM
     const topUserAvatarEl = document.getElementById('topUserAvatar');
     const topUserNameEl   = document.getElementById('topUserName');
     const topUserHandleEl = document.getElementById('topUserHandle');
     const topUserScoreEl  = document.getElementById('topUserScore');
     const sendResultBtn   = document.getElementById('sendResultBtn');
+
+    const leagueListEl    = document.getElementById('leagueList');
+    const leagueSummaryEl = document.getElementById('leagueSummary');
 
     const upgradesListEl  = document.getElementById('upgradesList');
 
@@ -1351,6 +1480,8 @@
     });
 
     // ===== 7. Tabs + GSAP =====
+    let leagueLoadedOnce = false;
+
     function setActiveTab(tabName) {
         screens.forEach(screen => {
             const isActive = screen.dataset.tab === tabName;
@@ -1374,6 +1505,12 @@
             btn.classList.toggle('active', isActive);
             if (isActive) moveNavIndicator(index);
         });
+
+        // при открытии вкладки TOP — подгружаем лигу
+        if (tabName === 'leaderboard' && !leagueLoadedOnce) {
+            leagueLoadedOnce = true;
+            loadLeagueFromWorker();
+        }
     }
 
     function moveNavIndicator(index) {
@@ -2103,7 +2240,159 @@
         saveTimeout = setTimeout(savePlayerState, 1500);
     }
 
-    // ===== 14. Send result to bot from TOP tab =====
+    // ===== 14. ЛИГА через Cloudflare Worker =====
+    function renderLeagueFromData(data) {
+        leagueListEl.innerHTML = '';
+
+        if (!data) {
+            leagueListEl.innerHTML = '<div class="league-empty">Лига ещё пустая. Отправь результат первым!</div>';
+            leagueSummaryEl.textContent = 'нет данных';
+            return;
+        }
+
+        const top = Array.isArray(data.top)
+            ? data.top
+            : (Array.isArray(data.league) ? data.league : (Array.isArray(data) ? data : []));
+
+        if (!top.length) {
+            leagueListEl.innerHTML = '<div class="league-empty">Лига ещё пустая. Отправь результат первым!</div>';
+            leagueSummaryEl.textContent = 'нет игроков';
+            return;
+        }
+
+        const myId = currentUser ? String(currentUser.id) : null;
+        let myRank = null;
+
+        top.forEach((p, index) => {
+            const rank = p.rank || (index + 1);
+            const id = String(p.telegram_id || p.user_id || p.id || '');
+            const isMe = myId && id && myId === id;
+
+            if (isMe && myRank === null) myRank = rank;
+
+            const row = document.createElement('div');
+            row.className = 'league-row';
+            if (isMe) row.classList.add('me');
+
+            const rankEl = document.createElement('div');
+            rankEl.className = 'league-rank';
+            rankEl.textContent = rank;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'league-avatar';
+            if (p.photo_url) {
+                const img = document.createElement('img');
+                img.src = p.photo_url;
+                img.alt = 'avatar';
+                avatar.appendChild(img);
+            }
+
+            const main = document.createElement('div');
+            main.className = 'league-main';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'league-name';
+            nameEl.textContent = p.name || 'Player';
+
+            const handleEl = document.createElement('div');
+            handleEl.className = 'league-handle';
+            handleEl.textContent = p.username ? '@' + p.username : '';
+
+            main.appendChild(nameEl);
+            main.appendChild(handleEl);
+
+            const scoreEl = document.createElement('div');
+            scoreEl.className = 'league-score';
+            scoreEl.textContent = (p.score != null ? p.score : 0).toFixed
+                ? p.score.toFixed(1)
+                : Number(p.score || 0).toFixed(1);
+
+            row.appendChild(rankEl);
+            row.appendChild(avatar);
+            row.appendChild(main);
+            row.appendChild(scoreEl);
+
+            leagueListEl.appendChild(row);
+        });
+
+        if (myRank != null) {
+            leagueSummaryEl.textContent = `ты на ${myRank}-м месте`;
+        } else {
+            leagueSummaryEl.textContent = `игроков: ${top.length}`;
+        }
+    }
+
+    async function loadLeagueFromWorker() {
+        if (!WORKER_API_BASE) return;
+        if (!currentUser) {
+            leagueSummaryEl.textContent = 'только для авторизованных';
+            leagueListEl.innerHTML = '<div class="league-empty">Открой мини-апп внутри Telegram аккаунта.</div>';
+            return;
+        }
+
+        leagueSummaryEl.textContent = 'загрузка...';
+        leagueListEl.innerHTML = '<div class="league-empty">Загрузка лиги...</div>';
+
+        try {
+            const url = `${WORKER_API_BASE}/league/top?telegram_id=${encodeURIComponent(currentUser.id)}&limit=50`;
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: tg ? {'X-Telegram-Init-Data': tg.initData} : {}
+            });
+            if (!res.ok) {
+                leagueSummaryEl.textContent = 'ошибка сервера';
+                leagueListEl.innerHTML = '<div class="league-empty">Не удалось загрузить лигу.</div>';
+                return;
+            }
+            const data = await res.json();
+            renderLeagueFromData(data);
+        } catch (e) {
+            console.warn('loadLeagueFromWorker error', e);
+            leagueSummaryEl.textContent = 'сеть недоступна';
+            leagueListEl.innerHTML = '<div class="league-empty">Не удалось загрузить лигу (network error).</div>';
+        }
+    }
+
+    async function submitScoreToWorker() {
+        if (!WORKER_API_BASE) return;
+        if (!currentUser) return;
+
+        const payload = {
+            telegram_id: currentUser.id,
+            name: [currentUser.first_name, currentUser.last_name].filter(Boolean).join(' ') || 'Player',
+            username: currentUser.username || null,
+            score: balance,
+            photo_url: currentUser.photo_url || null
+        };
+
+        try {
+            const res = await fetch(`${WORKER_API_BASE}/league/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(tg ? {'X-Telegram-Init-Data': tg.initData} : {})
+                },
+                body: JSON.stringify(payload)
+            });
+
+            let data = null;
+            try {
+                data = await res.json();
+            } catch (_) {}
+
+            // сервер может сразу вернуть обновлённый TOP
+            if (data) {
+                renderLeagueFromData(data);
+            } else {
+                // если нет — просто перезагрузим лигу
+                loadLeagueFromWorker();
+            }
+        } catch (e) {
+            console.warn('submitScoreToWorker error', e);
+        }
+    }
+
+    // ===== 15. Send result to bot + Worker from TOP tab =====
     if (sendResultBtn) {
         sendResultBtn.addEventListener('click', () => {
             if (!tg) {
@@ -2112,15 +2401,18 @@
             }
 
             try {
+                // отправка результат боту (как и раньше)
                 tg.sendData(JSON.stringify({
-    action: "send_score",
-    score: balance
-}));
+                    action: "send_score",
+                    score: balance
+                }));
 
+                // отправка результат в Cloudflare Worker (лига)
+                submitScoreToWorker();
 
                 tg.showPopup({
                     title: 'Результат отправлен',
-                    message: 'Бот обновит ваш рейтинг и покажет место в топе.',
+                    message: 'Бот обновит ваш рейтинг, а сервер — место в лиге.',
                     buttons: [{id: 'ok', type: 'close', text: 'Ок'}]
                 });
             } catch (e) {
@@ -2129,7 +2421,7 @@
         });
     }
 
-    // ===== 15. Init App =====
+    // ===== 16. Init App =====
     function initApp() {
         initUserInfo();
         renderTasks();
