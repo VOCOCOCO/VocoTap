@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <!-- Снег -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- Lottie для бан-экрана и т.п. -->
+    <!-- Lottie для бан-экрана -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
 
     <style>
@@ -105,7 +105,7 @@
             #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
             background-size: cover;
             background-position: center;
-            /* ТУТ ВСТАВИШЬ СВОЁ ЛОГО:
+            /* сюда вставишь своё лого, если нужно:
                background-image: url('your-logo.png'); */
         }
 
@@ -225,7 +225,6 @@
             letter-spacing: 0.06em;
         }
 
-        /* чистая монета-картинка */
         .coin-wrapper {
             width: 300px;
             height: 300px;
@@ -419,34 +418,68 @@
             border: 1px solid rgba(0,0,0,0.4);
         }
 
-        /* LEADERBOARD */
-        .lb-card {
-            padding: 12px 12px 10px;
-            height: 100%;
+        /* NEW TOP SCREEN (PROFILE) */
+        .top-card {
+            padding: 18px 16px 16px;
+            min-height: 100%;
             display: flex;
             flex-direction: column;
-        }
-
-        .lb-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            text-align: center;
         }
 
-        .lb-title-block {
-            display: flex;
-            flex-direction: column;
+        .top-avatar-wrap {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            padding: 3px;
+            background: radial-gradient(circle at 0 0,
+            rgba(159,209,255,0.7), rgba(4,8,24,1));
+            box-shadow: 0 14px 30px rgba(0,0,0,0.7);
+            margin-bottom: 12px;
         }
 
-        .lb-title {
-            font-size: 13px;
+        .top-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background: radial-gradient(circle at 30% 30%,
+            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
+        }
+
+        .top-avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .top-name {
+            font-size: 16px;
             font-weight: 600;
         }
 
-        .lb-subtitle {
-            font-size: 11px;
+        .top-handle {
+            font-size: 12px;
             color: var(--text-soft);
+            margin-top: 2px;
+        }
+
+        .top-score {
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .top-score span {
+            font-weight: 600;
+            color: var(--accent-soft);
+        }
+
+        .top-send-wrap {
+            margin-top: 16px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .btn {
@@ -464,143 +497,26 @@
 
         .btn:active { transform: scale(0.97); }
 
-        .lb-user-card {
-            padding: 10px 11px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.24);
-            background: radial-gradient(circle at top left,
-            rgba(95,168,255,0.25), rgba(15,20,45,0.95));
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .lb-rank-circle {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn-primary {
+            padding: 9px 18px;
             font-size: 13px;
-            font-weight: 600;
-        }
-
-        .lb-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%,
-            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .lb-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .lb-user-main {
-            flex: 1;
-        }
-
-        .lb-user-name {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .lb-user-handle {
-            font-size: 11px;
-            color: var(--text-soft);
-        }
-
-        .lb-user-score {
-            font-size: 12px;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .lb-user-score span {
-            font-size: 11px;
-            font-weight: 400;
-            color: var(--accent-soft);
-        }
-
-        .lb-list {
-            flex: 1;
-            margin-top: 4px;
-            overflow-y: auto;
-            padding-right: 3px;
-        }
-
-        .lb-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 6px;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(255,255,255,0.08);
             background: linear-gradient(135deg,
-            rgba(255,255,255,0.03), rgba(7,10,26,0.95));
+            rgba(95,168,255,0.95), rgba(31,104,255,0.98));
+            color: #ffffff;
+            box-shadow: 0 10px 24px rgba(95,168,255,0.6);
+        }
+
+        .top-hint {
             font-size: 11px;
-            margin-bottom: 6px;
-        }
-
-        .lb-row-rank { width: 22px; text-align: center; color: var(--text-soft); }
-
-        .lb-row-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%,
-            #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .lb-row-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .lb-row-nameblock { flex: 1; }
-        .lb-row-name { font-size: 12px; }
-        .lb-row-score { font-weight: 500; text-align: right; }
-        .lb-row-score span { font-size: 10px; color: var(--accent-soft); }
-
-        .lb-row.you {
-            border-color: rgba(159,209,255,0.7);
-            background: linear-gradient(135deg,
-            rgba(95,168,255,0.16), rgba(15,20,45,0.95));
-        }
-
-        .lb-footer-note {
-            margin-top: 4px;
-            font-size: 10px;
             color: var(--text-muted);
-            text-align: center;
+            margin-top: 10px;
+            max-width: 260px;
         }
 
-        .lb-remind {
-            margin-top: 6px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .lb-remind .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* UPGRADES */
+        /* UPGRADES + INVEST */
         .up-card {
             padding: 12px 12px 10px;
-            height: 100%;
+            /* height:100% убирать, чтобы график не вылезал */
             display: flex;
             flex-direction: column;
         }
@@ -745,16 +661,16 @@
         }
 
         .invest-panel {
-            margin-top: 8px;
-            padding: 8px 10px 10px;
+            margin-top: 10px;
+            padding: 10px 12px;
             border-radius: var(--radius-md);
             border: 1px solid rgba(255,255,255,0.2);
             background: radial-gradient(circle at top,
             rgba(255,255,255,0.08), rgba(4,7,20,0.98));
-            /* БЕЗ ВНУТРЕННЕГО СКРОЛЛА, БОЛЬШОЙ БЛОК */
-            max-height: none;
-            overflow-y: visible;
-            display: none; /* показываем только когда есть инвестиция */
+            /* фикс, чтобы график не вылезал */
+            max-height: 260px;
+            overflow-y: auto;
+            display: none;
         }
 
         .invest-info-row {
@@ -787,7 +703,7 @@
 
         #investChart {
             width: 100%;
-            height: 180px; /* увеличил график */
+            height: 160px;
             display: block;
         }
 
@@ -875,13 +791,10 @@
             opacity: 1;
         }
 
-        /* scrollbars */
-        .lb-list::-webkit-scrollbar,
         .screen::-webkit-scrollbar {
             width: 3px;
         }
 
-        .lb-list::-webkit-scrollbar-thumb,
         .screen::-webkit-scrollbar-thumb {
             background: rgba(255,255,255,0.24);
             border-radius: 999px;
@@ -889,7 +802,7 @@
 
         @media (max-height: 640px) {
             .coin-wrapper { width: 185px; height: 185px; }
-            #investChart { height: 140px; }
+            #investChart { height: 130px; }
         }
 
         /* ПОЛНОЭКРАННЫЙ БАН-ЭКРАН */
@@ -959,7 +872,6 @@
                 </div>
 
                 <div class="coin-wrapper" id="coin">
-                    <!-- ТУТ твоя PNG монета -->
                     <img src="IMG_4943.PNG" class="coin-img" alt="coin">
                 </div>
 
@@ -979,39 +891,29 @@
             </div>
         </section>
 
-        <!-- LEADERBOARD -->
+        <!-- TOP / PROFILE -->
         <section class="screen" id="screen-leaderboard" data-tab="leaderboard">
-            <div class="glass-card lb-card">
-                <div class="lb-header">
-                    <div class="lb-title-block">
-                        <div class="lb-title">Топ лига</div>
-                        <div class="lb-subtitle">Топ 10 тапперов</div>
-                    </div>
-                    <button class="btn" id="refreshLeaderboardBtn">Обновить</button>
-                </div>
-
-                <div class="lb-user-card">
-                    <div class="lb-rank-circle" id="lbUserRank">–</div>
-                    <div class="lb-avatar" id="lbUserAvatar"></div>
-                    <div class="lb-user-main">
-                        <div class="lb-user-name" id="lbUserName">You</div>
-                        <div class="lb-user-handle" id="lbUserHandle">@you</div>
-                    </div>
-                    <div class="lb-user-score" id="lbUserScore">
-                        0.0<span> pts</span>
+            <div class="glass-card top-card">
+                <div class="top-avatar-wrap">
+                    <div class="top-avatar-inner" id="topUserAvatar">
+                        <!-- сюда вставится фото юзера из Telegram -->
                     </div>
                 </div>
+                <div class="top-name" id="topUserName">Player</div>
+                <div class="top-handle" id="topUserHandle">@username</div>
 
-                <div class="lb-list" id="lbList"></div>
-
-                <div class="lb-footer-note">
-                    Если сервер недоступен — показываются демо-игроки user1…user10 (по 0 pts).
+                <div class="top-score">
+                    Ваш результат: <span id="topUserScore">0.0</span> pts
                 </div>
 
-                <div class="lb-remind">
-                    <button class="btn" id="remindBtn">
-                        🏆 Напомнить пользователям
+                <div class="top-send-wrap">
+                    <button class="btn btn-primary" id="sendResultBtn">
+                        Отправить результат
                     </button>
+                </div>
+
+                <div class="top-hint">
+                    Бот получит ваш результат, покажет место в рейтинге и даст посмотреть TOP игроков.
                 </div>
             </div>
         </section>
@@ -1097,10 +999,10 @@
 
             <button class="nav-btn" data-tab-target="leaderboard">
                 <svg viewBox="0 0 24 24">
-                    <path d="M6 10.5v9M12 5.5v14M18 8v11.5"
+                    <path d="M7.5 5h9l1.5 4.5-6 9-6-9L7.5 5z"
                           fill="none" stroke="currentColor" stroke-width="1.4"
-                          stroke-linecap="round"/>
-                    <path d="M4 10.5h4M10 5.5h4M16 8h4"
+                          stroke-linejoin="round"/>
+                    <path d="M10 9l2 2 2-2"
                           fill="none" stroke="currentColor" stroke-width="1.4"
                           stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -1149,10 +1051,7 @@
     let tapMultiplier = 1; // множитель от бустов
     let totalTaps = 0;
     let sessionTaps = 0;
-    let lastScoreSyncTs = 0; // время последней отправки очков боту
 
-
-    // бонус за все задачи
     let tasksBonusGiven = false;
 
     // ===== АНТИ-АВТОКЛИКЕР =====
@@ -1187,8 +1086,7 @@
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,
-                // ТУТ ВСТАВИШЬ СВОЙ LOTTIE JSON
-                path: 'your-ban-animation.json'
+                path: 'your-ban-animation.json' // свой JSON
             });
         }
 
@@ -1216,11 +1114,9 @@
         const delta = now - lastTapTime;
         lastTapTime = now;
 
-        // очень быстрые «нажатия» — явный автоклик
         if (delta > 0 && delta < 25) {
             clickSpeedWarnings++;
         } else if (delta > 100) {
-            // человек отпустил/передохнул — можно немного сбросить
             clickSpeedWarnings = Math.max(0, clickSpeedWarnings - 1);
         }
 
@@ -1234,12 +1130,11 @@
     if (banUntil > Date.now()) {
         showBanScreen();
     } else {
-        // бан уже истёк — подчистим
         localStorage.removeItem(BAN_KEY);
         banUntil = 0;
     }
 
-    // boosts: ТРЕТИЙ (индекс 2) даёт +0.9 к тапу
+    // boosts
     const upgrades = [
         {
             id: 'boost_small',
@@ -1248,7 +1143,7 @@
             priceStars: 10,
             levelLabel: 'Common',
             unlocked: false,
-            invoiceLink: 'https://t.me/$QYGD-2BXyEmoFAAAsczOIEMbHFo', // TODO
+            invoiceLink: 'https://t.me/$QYGD-2BXyEmoFAAAsczOIEMbHFo',
             effect: () => { perTap += 0.1; }
         },
         {
@@ -1258,7 +1153,7 @@
             priceStars: 25,
             levelLabel: 'Rare',
             unlocked: false,
-            invoiceLink: 'https://t.me/your_bot?start=boost_medium', // TODO
+            invoiceLink: 'https://t.me/your_bot?start=boost_medium',
             effect: () => { perTap += 0.3; }
         },
         {
@@ -1268,7 +1163,7 @@
             priceStars: 60,
             levelLabel: 'Legendary',
             unlocked: false,
-            invoiceLink: 'https://t.me/your_bot?start=boost_big', // TODO третий буст
+            invoiceLink: 'https://t.me/your_bot?start=boost_big',
             effect: () => { perTap += 0.9; }
         }
     ];
@@ -1308,13 +1203,10 @@
         }
     ];
 
-    // API-заглушки — поменяешь на свои
+    // API-заглушки
     const API_BASE = 'http://localhost:3000';
-    const LEADERBOARD_API   = API_BASE + '/api/leaderboard';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
-    const PLAYER_STATE_API  = API_BASE + '/api/player/state';   // GET/POST сохранение игрока
-    const SCORE_SYNC_API    = API_BASE + '/api/score';          // отправка очков для рейтинга
-    const REMIND_LINK       = 'https://t.me/your_channel'; // TODO ссылка "Напомнить пользователям"
+    const PLAYER_STATE_API  = API_BASE + '/api/player/state';
 
     // ===== 3. DOM =====
     const balanceValueEl = document.getElementById('balanceValue');
@@ -1326,32 +1218,30 @@
 
     const tasksListEl    = document.getElementById('tasksList');
 
-    const lbUserRankEl   = document.getElementById('lbUserRank');
-    const lbUserAvatarEl = document.getElementById('lbUserAvatar');
-    const lbUserNameEl   = document.getElementById('lbUserName');
-    const lbUserHandleEl = document.getElementById('lbUserHandle');
-    const lbUserScoreEl  = document.getElementById('lbUserScore');
-    const lbListEl       = document.getElementById('lbList');
-    const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
-    const remindBtn      = document.getElementById('remindBtn');
+    // топ-вкладка
+    const topUserAvatarEl = document.getElementById('topUserAvatar');
+    const topUserNameEl   = document.getElementById('topUserName');
+    const topUserHandleEl = document.getElementById('topUserHandle');
+    const topUserScoreEl  = document.getElementById('topUserScore');
+    const sendResultBtn   = document.getElementById('sendResultBtn');
 
-    const upgradesListEl = document.getElementById('upgradesList');
+    const upgradesListEl  = document.getElementById('upgradesList');
 
-    const navButtons     = Array.from(document.querySelectorAll('.nav-btn'));
-    const screens        = Array.from(document.querySelectorAll('.screen'));
-    const navIndicatorEl = document.getElementById('navIndicator');
+    const navButtons      = Array.from(document.querySelectorAll('.nav-btn'));
+    const screens         = Array.from(document.querySelectorAll('.screen'));
+    const navIndicatorEl  = document.getElementById('navIndicator');
 
     // invest DOM
-    const investStartBtn     = document.getElementById('investStartBtn');
-    const investPanelEl      = document.getElementById('investPanel');
-    const investCardEl       = document.querySelector('.invest-card');
-    const investAmountEl     = document.getElementById('investAmount');
-    const investPriceLabelEl = document.getElementById('investPriceLabel');
-    const investValueLabelEl = document.getElementById('investValueLabel');
-    const investWithdrawBtn  = document.getElementById('investWithdrawBtn');
-    const investTopUpBtn     = document.getElementById('investTopUpBtn');
-    const investCanvas       = document.getElementById('investChart');
-    const investTooltip      = document.getElementById('investTooltip');
+    const investStartBtn      = document.getElementById('investStartBtn');
+    const investPanelEl       = document.getElementById('investPanel');
+    const investCardEl        = document.querySelector('.invest-card');
+    const investAmountEl      = document.getElementById('investAmount');
+    const investPriceLabelEl  = document.getElementById('investPriceLabel');
+    const investValueLabelEl  = document.getElementById('investValueLabel');
+    const investWithdrawBtn   = document.getElementById('investWithdrawBtn');
+    const investTopUpBtn      = document.getElementById('investTopUpBtn');
+    const investCanvas        = document.getElementById('investChart');
+    const investTooltip       = document.getElementById('investTooltip');
     const investProfitLabelEl = document.getElementById('investProfitLabel');
     const investTimeLabelEl   = document.getElementById('investTimeLabel');
 
@@ -1361,22 +1251,28 @@
             const name = [currentUser.first_name, currentUser.last_name].filter(Boolean).join(' ');
             userLabelEl.textContent = name || 'Player';
 
-            lbUserNameEl.textContent = name || 'Player';
-            lbUserHandleEl.textContent = currentUser.username ? '@' + currentUser.username : 'без юзернейма';
+            const handle = currentUser.username ? '@' + currentUser.username : 'без юзернейма';
 
+            // header
             if (currentUser.photo_url) {
                 userAvatarEl.style.backgroundImage = `url(${currentUser.photo_url})`;
+            }
 
+            // top screen
+            topUserNameEl.textContent = name || 'Player';
+            topUserHandleEl.textContent = handle;
+
+            if (currentUser.photo_url) {
+                topUserAvatarEl.innerHTML = '';
                 const img = document.createElement('img');
                 img.src = currentUser.photo_url;
                 img.alt = 'avatar';
-                lbUserAvatarEl.innerHTML = '';
-                lbUserAvatarEl.appendChild(img);
+                topUserAvatarEl.appendChild(img);
             }
         } else {
             userLabelEl.textContent = 'Гость';
-            lbUserNameEl.textContent = 'Гость';
-            lbUserHandleEl.textContent = '';
+            topUserNameEl.textContent = 'Гость';
+            topUserHandleEl.textContent = '';
         }
     }
 
@@ -1388,7 +1284,10 @@
     function updateBalanceUI() {
         balanceValueEl.textContent = balance.toFixed(1);
         sessionStatEl.textContent  = `${sessionTaps} taps`;
-        lbUserScoreEl.innerHTML    = `${balance.toFixed(1)}<span> pts</span>`;
+
+        if (topUserScoreEl) {
+            topUserScoreEl.textContent = balance.toFixed(1);
+        }
     }
 
     function updateTapInfoUI() {
@@ -1425,49 +1324,26 @@
         }
     }
 
-function syncScoreToBot() {
-    if (!tg) return;
-
-    const now = Date.now();
-
-    // чтобы не спамить бота, шлём не чаще раза в 5 секунд
-    if (now - lastScoreSyncTs < 5000) return;
-    lastScoreSyncTs = now;
-
-    try {
-        tg.sendData(JSON.stringify({
-            action: "update_score",
-            score: balance
-        }));
-    } catch (e) {
-        console.warn("sendData failed", e);
-    }
-}
-
-
-    // ===== 6. Tap Logic (мультитач + маленькая анимация + античит) =====
+    // ===== 6. Tap Logic =====
     function handleTap(event) {
-    if (navigator.vibrate) {
-        navigator.vibrate(8);
+        if (navigator.vibrate) {
+            navigator.vibrate(8);
+        }
+
+        autoklickerCheck();
+
+        const gain = currentPerTap();
+        balance = +(balance + gain).toFixed(2);
+        totalTaps += 1;
+        sessionTaps += 1;
+
+        updateBalanceUI();
+        createTapFloat(event.clientX, event.clientY, gain);
+        scheduleSaveState();
+
+        coinEl.classList.add('tap-anim');
+        setTimeout(() => coinEl.classList.remove('tap-anim'), 80);
     }
-
-    const gain = currentPerTap();
-    balance = +(balance + gain).toFixed(2);
-    totalTaps += 1;
-    sessionTaps += 1;
-
-    updateBalanceUI();
-
-    // 🔹 СЮДА ДОБАВЛЯЕМ ОТПРАВКУ ОЧКОВ БОТУ
-    syncScoreToBot();
-
-    createTapFloat(event.clientX, event.clientY, gain);
-    scheduleSaveState();
-
-    coinEl.classList.add('tap-anim');
-    setTimeout(() => coinEl.classList.remove('tap-anim'), 80);
-}
-
 
     coinEl.addEventListener('pointerdown', (e) => {
         e.preventDefault();
@@ -1586,7 +1462,7 @@ function syncScoreToBot() {
         if (tasksBonusGiven) return;
         const allDone = tasks.every(t => t.status === 'completed');
         if (allDone) {
-            perTap += 0.2; // бонус за все задания
+            perTap += 0.2;
             tasksBonusGiven = true;
             updateTapInfoUI();
         }
@@ -1613,137 +1489,7 @@ function syncScoreToBot() {
         }
     });
 
-    // ===== 9. Leaderboard =====
-    async function loadLeaderboard() {
-        lbListEl.innerHTML = '';
-        const loading = document.createElement('div');
-        loading.style.fontSize = '11px';
-        loading.style.color = 'var(--text-soft)';
-        loading.style.textAlign = 'center';
-        loading.style.paddingTop = '8px';
-        loading.textContent = 'Загружаем топ…';
-        lbListEl.appendChild(loading);
-
-        try {
-            const res = await fetch(LEADERBOARD_API, {
-                method: 'GET',
-                headers: {
-                    'X-Telegram-Init-Data': tg ? tg.initData : ''
-                }
-            });
-
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const data = await res.json();
-
-            // ожидаемый формат:
-            // {
-            //   you: { rank, score, username, photo_url },
-            //   top: [{ rank, score, username, photo_url }, ...]
-            // }
-
-            const you = (data && data.you) || {rank: '-', score: balance, username: currentUser?.username};
-            const top = (data && data.top || []).slice(0, 10);
-
-            lbUserRankEl.textContent = you.rank || '-';
-            lbUserScoreEl.innerHTML = `${(you.score ?? 0).toFixed(1)}<span> pts</span>`;
-
-            lbListEl.innerHTML = '';
-            if (!top.length) {
-                throw new Error('No top data');
-            }
-
-            top.forEach(entry => {
-                const row = document.createElement('div');
-                row.className = 'lb-row';
-
-                if (you.rank && entry.rank === you.rank) row.classList.add('you');
-
-                const rank = document.createElement('div');
-                rank.className = 'lb-row-rank';
-                rank.textContent = entry.rank ?? '-';
-
-                const avatarWrap = document.createElement('div');
-                avatarWrap.className = 'lb-row-avatar';
-                if (entry.photo_url) {
-                    const img = document.createElement('img');
-                    img.src = entry.photo_url;
-                    avatarWrap.appendChild(img);
-                }
-
-                const nameBlock = document.createElement('div');
-                nameBlock.className = 'lb-row-nameblock';
-
-                const name = document.createElement('div');
-                name.className = 'lb-row-name';
-                name.textContent = entry.username ? '@' + entry.username : (entry.name || 'User');
-
-                nameBlock.appendChild(name);
-
-                const score = document.createElement('div');
-                score.className = 'lb-row-score';
-                score.innerHTML = `${(entry.score ?? 0).toFixed(1)}<span> pts</span>`;
-
-                row.appendChild(rank);
-                row.appendChild(avatarWrap);
-                row.appendChild(nameBlock);
-                row.appendChild(score);
-
-                lbListEl.appendChild(row);
-            });
-        } catch (e) {
-            console.warn('Leaderboard load failed, demo mode', e);
-            lbListEl.innerHTML = '';
-
-            const demo = [];
-            for (let i = 1; i <= 10; i++) {
-                demo.push({rank: i, username: 'user' + i, score: 0});
-            }
-
-            lbUserRankEl.textContent = '-';
-            lbUserScoreEl.innerHTML = `${balance.toFixed(1)}<span> pts</span>`;
-
-            demo.forEach(entry => {
-                const row = document.createElement('div');
-                row.className = 'lb-row';
-
-                const rank = document.createElement('div');
-                rank.className = 'lb-row-rank';
-                rank.textContent = entry.rank;
-
-                const avatarWrap = document.createElement('div');
-                avatarWrap.className = 'lb-row-avatar';
-
-                const nameBlock = document.createElement('div');
-                nameBlock.className = 'lb-row-nameblock';
-
-                const name = document.createElement('div');
-                name.className = 'lb-row-name';
-                name.textContent = '@' + entry.username;
-
-                nameBlock.appendChild(name);
-
-                const score = document.createElement('div');
-                score.className = 'lb-row-score';
-                score.innerHTML = `${entry.score.toFixed(1)}<span> pts</span>`;
-
-                row.appendChild(rank);
-                row.appendChild(avatarWrap);
-                row.appendChild(nameBlock);
-                row.appendChild(score);
-
-                lbListEl.appendChild(row);
-            });
-        }
-    }
-
-    refreshLeaderboardBtn.addEventListener('click', loadLeaderboard);
-
-    remindBtn.addEventListener('click', () => {
-        if (tg) tg.openTelegramLink(REMIND_LINK);
-        else window.open(REMIND_LINK, '_blank');
-    });
-
-    // ===== 10. Upgrades + openInvoice(invoice_link) =====
+    // ===== 9. Upgrades + openInvoice =====
     let pendingUpgradeId = null;
 
     function renderUpgrades() {
@@ -1816,7 +1562,6 @@ function syncScoreToBot() {
 
         pendingUpgradeId = upg.id;
 
-        // 💳 ОТКРЫТИЕ ИНВОЙСА ЧЕРЕЗ ОФИЦИАЛЬНЫЙ МЕТОД
         tg.openInvoice(upg.invoiceLink);
     }
 
@@ -1830,7 +1575,6 @@ function syncScoreToBot() {
             if (!upg) return;
 
             if (e.status === 'paid') {
-                // можно уведомить сервер
                 fetch(UPGRADE_APPLY_API, {
                     method: 'POST',
                     headers: {
@@ -1857,12 +1601,12 @@ function syncScoreToBot() {
         });
     }
 
-    // ===== 11. Инвестиции + график с датами и % =====
+    // ===== 10. Инвестиции =====
     let investActive = false;
-    let investAmount = 0;   // сколько очков вложено (суммарно)
-    let investPrice = 0;    // текущая цена "монеты"
-    let investShares = 0;   // количество "долей"
-    let investHistory = []; // массив {t, price}
+    let investAmount = 0;
+    let investPrice = 0;
+    let investShares = 0;
+    let investHistory = [];
     let investInterval = null;
 
     function updateInvestUI() {
@@ -1917,7 +1661,6 @@ function syncScoreToBot() {
 
         ctx.clearRect(0, 0, w, h);
 
-        // фон
         const grad = ctx.createLinearGradient(0, 0, 0, h);
         grad.addColorStop(0, '#101827');
         grad.addColorStop(1, '#02030a');
@@ -1945,7 +1688,6 @@ function syncScoreToBot() {
 
         ctx.stroke();
 
-        // ось времени (подписи слева и справа)
         const first = new Date(investHistory[0].t);
         const last  = new Date(investHistory[investHistory.length - 1].t);
         const fmt = (d) => d.getHours().toString().padStart(2,'0') + ':' +
@@ -1966,7 +1708,7 @@ function syncScoreToBot() {
 
         investInterval = setInterval(() => {
             if (!investActive || investPrice <= 0) return;
-            // небольшой случайный шаг ±0.1..0.9%
+
             const sign = Math.random() < 0.5 ? -1 : 1;
             const perc = (Math.random() * 0.8 + 0.1);
             const factor = 1 + sign * (perc / 100);
@@ -1986,7 +1728,7 @@ function syncScoreToBot() {
 
         investActive = true;
         investAmount = initialAmount;
-        investPrice = 100; // стартовая цена
+        investPrice = 100;
         investShares = investAmount / investPrice;
         investHistory = [{ t: Date.now(), price: investPrice }];
 
@@ -2003,7 +1745,6 @@ function syncScoreToBot() {
         balance -= amount;
         updateBalanceUI();
 
-        // покупаем дополнительные доли по текущей цене
         const addedShares = amount / investPrice;
         investShares += addedShares;
         investAmount += amount;
@@ -2032,7 +1773,6 @@ function syncScoreToBot() {
         if (!investActive || investShares <= 0) {
             startNewInvestment(amount);
         } else {
-            // если уже есть инвест, считаем это пополнением
             topUpInvestment(amount);
         }
     });
@@ -2079,7 +1819,6 @@ function syncScoreToBot() {
         alert('Инвестиция выведена: ' + value.toFixed(1) + ' pts');
     });
 
-    // просмотр цены по свайпу/движению
     investCanvas.addEventListener('pointermove', (e) => {
         if (!investHistory.length) return;
 
@@ -2107,7 +1846,7 @@ function syncScoreToBot() {
         investTooltip.style.opacity = '0';
     });
 
-    // ===== 12. Snow =====
+    // ===== 11. Snow =====
     function initSnow() {
         if (!window.particlesJS) return;
         particlesJS('snow', {
@@ -2135,12 +1874,11 @@ function syncScoreToBot() {
         });
     }
 
-    // ===== 13. Gift Spawn =====
+    // ===== 12. Gift Spawn =====
     let giftTimeout = null;
     let currentGiftEl = null;
 
     function scheduleGiftSpawn() {
-        // от 30 минут до 2 часов
         const min = 30 * 60 * 1000;
         const max = 120 * 60 * 1000;
         const delay = min + Math.random() * (max - min);
@@ -2160,7 +1898,6 @@ function syncScoreToBot() {
         gift.className = 'gift-box';
         gift.textContent = '🎁';
 
-        // позиционируем "слева чуть выше" относительно монеты
         gift.style.left = '10%';
         gift.style.top = '8%';
 
@@ -2184,12 +1921,10 @@ function syncScoreToBot() {
     function claimGiftReward(event, gift) {
         const reward = Math.floor(10 + Math.random() * (500 - 10 + 1));
 
-        // добавляем очки
         balance = +(balance + reward).toFixed(2);
         updateBalanceUI();
         scheduleSaveState();
 
-        // анимация суммы из точки подарка
         const rect = gift.getBoundingClientRect();
         const rootRect = document.body.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2 - rootRect.left;
@@ -2218,7 +1953,6 @@ function syncScoreToBot() {
             setTimeout(() => float.remove(), 800);
         }
 
-        // убираем подарок
         if (window.gsap) {
             gsap.to(gift, {
                 opacity: 0,
@@ -2235,11 +1969,10 @@ function syncScoreToBot() {
             currentGiftEl = null;
         }
 
-        // запланировать следующее появление
         scheduleGiftSpawn();
     }
 
-    // ===== 14. Cloud + LOCAL Save / Load =====
+    // ===== 13. Cloud + LOCAL Save / Load =====
     let saveTimeout = null;
     const LOCAL_STATE_KEY = 'vcoin_player_state';
 
@@ -2280,7 +2013,6 @@ function syncScoreToBot() {
             });
         }
 
-        // бонус по задачам: считаем по статусам
         tasksBonusGiven = tasks.every(t => t.status === 'completed');
 
         if (data.invest) {
@@ -2314,7 +2046,6 @@ function syncScoreToBot() {
     }
 
     async function loadPlayerState() {
-        // 1) локальное состояние
         try {
             const local = localStorage.getItem(LOCAL_STATE_KEY);
             if (local) {
@@ -2325,7 +2056,6 @@ function syncScoreToBot() {
             console.warn('local load error', e);
         }
 
-        // 2) если есть бэкенд — подгружаем оттуда
         if (!tg) return;
         try {
             const res = await fetch(PLAYER_STATE_API, {
@@ -2342,36 +2072,16 @@ function syncScoreToBot() {
         }
     }
 
-    async function syncScoreToBot() {
-        if (!tg) return;
-        try {
-            await fetch(SCORE_SYNC_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Telegram-Init-Data': tg.initData
-                },
-                body: JSON.stringify({
-                    score: balance
-                })
-            });
-        } catch (e) {
-            console.warn('syncScoreToBot failed', e);
-        }
-    }
-
     async function savePlayerState() {
         saveTimeout = null;
         const state = serializePlayerState();
 
-        // 1) локально
         try {
             localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state));
         } catch (e) {
             console.warn('local save error', e);
         }
 
-        // 2) на бэкенд
         if (tg) {
             try {
                 await fetch(PLAYER_STATE_API, {
@@ -2385,15 +2095,37 @@ function syncScoreToBot() {
             } catch (e) {
                 console.warn('savePlayerState failed', e);
             }
-
-            // 3) обновляем рейтинг на сервере
-            syncScoreToBot();
         }
     }
 
     function scheduleSaveState() {
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(savePlayerState, 1500);
+    }
+
+    // ===== 14. Send result to bot from TOP tab =====
+    if (sendResultBtn) {
+        sendResultBtn.addEventListener('click', () => {
+            if (!tg) {
+                alert('Результат можно отправить только из Telegram.');
+                return;
+            }
+
+            try {
+                tg.sendData(JSON.stringify({
+                    action: "send_score",
+                    score: balance
+                }));
+
+                tg.showPopup({
+                    title: 'Результат отправлен',
+                    message: 'Бот обновит ваш рейтинг и покажет место в топе.',
+                    buttons: [{id: 'ok', type: 'close', text: 'Ок'}]
+                });
+            } catch (e) {
+                console.warn('sendData failed', e);
+            }
+        });
     }
 
     // ===== 15. Init App =====
@@ -2403,7 +2135,6 @@ function syncScoreToBot() {
         renderUpgrades();
         updateBalanceUI();
         updateTapInfoUI();
-        loadLeaderboard();
         initSnow();
         moveNavIndicator(0);
         loadPlayerState();
