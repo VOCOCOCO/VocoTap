@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <!-- Снег -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- Lottie для бан-экрана и т.п. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js"></script>
 
     <style>
         :root {
@@ -103,8 +105,8 @@
             #ffffff, #9fd1ff 40%, #1f68ff 75%, #040818 100%);
             background-size: cover;
             background-position: center;
-            /* TODO: сюда можно поставить своё лого:
-               background-image: url('logo.png'); */
+            /* ТУТ ВСТАВИШЬ СВОЁ ЛОГО:
+               background-image: url('your-logo.png'); */
         }
 
         .app-title-block {
@@ -749,8 +751,9 @@
             border: 1px solid rgba(255,255,255,0.2);
             background: radial-gradient(circle at top,
             rgba(255,255,255,0.08), rgba(4,7,20,0.98));
-            max-height: 260px;
-            overflow-y: auto;
+            /* БЕЗ ВНУТРЕННЕГО СКРОЛЛА, БОЛЬШОЙ БЛОК */
+            max-height: none;
+            overflow-y: visible;
             display: none; /* показываем только когда есть инвестиция */
         }
 
@@ -784,7 +787,7 @@
 
         #investChart {
             width: 100%;
-            height: 140px;
+            height: 180px; /* увеличил график */
             display: block;
         }
 
@@ -874,21 +877,50 @@
 
         /* scrollbars */
         .lb-list::-webkit-scrollbar,
-        .screen::-webkit-scrollbar,
-        .invest-panel::-webkit-scrollbar {
+        .screen::-webkit-scrollbar {
             width: 3px;
         }
 
         .lb-list::-webkit-scrollbar-thumb,
-        .screen::-webkit-scrollbar-thumb,
-        .invest-panel::-webkit-scrollbar-thumb {
+        .screen::-webkit-scrollbar-thumb {
             background: rgba(255,255,255,0.24);
             border-radius: 999px;
         }
 
         @media (max-height: 640px) {
             .coin-wrapper { width: 185px; height: 185px; }
-            #investChart { height: 120px; }
+            #investChart { height: 140px; }
+        }
+
+        /* ПОЛНОЭКРАННЫЙ БАН-ЭКРАН */
+        #banModal {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top, #080010 0, #000 70%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            color: #ffffff;
+            text-align: center;
+            padding: 0 24px;
+        }
+
+        #banModal-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        #banModal-sub {
+            font-size: 16px;
+            color: #ff9aa9;
+            margin-bottom: 16px;
+        }
+
+        #banModal-timer {
+            font-size: 18px;
         }
     </style>
 </head>
@@ -927,7 +959,7 @@
                 </div>
 
                 <div class="coin-wrapper" id="coin">
-                    <!-- TODO: сюда ставишь своё PNG -->
+                    <!-- ТУТ твоя PNG монета -->
                     <img src="IMG_4943.PNG" class="coin-img" alt="coin">
                 </div>
 
@@ -1090,6 +1122,16 @@
     </div>
 </div>
 
+<!-- ПОЛНОЭКРАННЫЙ БАН-ЭКРАН ОТ АВТОКЛИКЕРА -->
+<div id="banModal">
+    <div id="banLottie" style="width:220px;height:220px;margin-bottom:20px;"></div>
+    <div id="banModal-title">Вы забанены</div>
+    <div id="banModal-sub">Обнаружен автокликер</div>
+    <div id="banModal-timer">
+        Разблокировка через: <span id="banTimerText">01:00:00</span>
+    </div>
+</div>
+
 <script>
     // ===== 1. Telegram Init =====
     const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
@@ -1107,9 +1149,95 @@
     let tapMultiplier = 1; // множитель от бустов
     let totalTaps = 0;
     let sessionTaps = 0;
+    let lastScoreSyncTs = 0; // время последней отправки очков боту
+
 
     // бонус за все задачи
     let tasksBonusGiven = false;
+
+    // ===== АНТИ-АВТОКЛИКЕР =====
+    const BAN_KEY = 'vcoin_ban_until';
+    let banUntil = parseInt(localStorage.getItem(BAN_KEY) || '0', 10) || 0;
+    let lastTapTime = 0;
+    let clickSpeedWarnings = 0;
+    let banTimerInterval = null;
+    let banShown = false;
+
+    const banModalEl = document.getElementById('banModal');
+    const banTimerEl = document.getElementById('banTimerText');
+
+    function formatBanTime(msLeft) {
+        let totalSec = Math.max(0, Math.floor(msLeft / 1000));
+        let h = Math.floor(totalSec / 3600);
+        let m = Math.floor((totalSec % 3600) / 60);
+        let s = totalSec % 60;
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    function showBanScreen() {
+        if (banShown) return;
+        banShown = true;
+
+        banModalEl.style.display = 'flex';
+
+        if (window.lottie) {
+            lottie.loadAnimation({
+                container: document.getElementById('banLottie'),
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                // ТУТ ВСТАВИШЬ СВОЙ LOTTIE JSON
+                path: 'your-ban-animation.json'
+            });
+        }
+
+        if (banTimerInterval) clearInterval(banTimerInterval);
+
+        const updateTimer = () => {
+            const now = Date.now();
+            if (banUntil <= now) {
+                localStorage.removeItem(BAN_KEY);
+                clearInterval(banTimerInterval);
+                banTimerInterval = null;
+                location.reload();
+                return;
+            }
+            const msLeft = banUntil - now;
+            banTimerEl.textContent = formatBanTime(msLeft);
+        };
+
+        updateTimer();
+        banTimerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function autoklickerCheck() {
+        const now = performance.now();
+        const delta = now - lastTapTime;
+        lastTapTime = now;
+
+        // очень быстрые «нажатия» — явный автоклик
+        if (delta > 0 && delta < 25) {
+            clickSpeedWarnings++;
+        } else if (delta > 100) {
+            // человек отпустил/передохнул — можно немного сбросить
+            clickSpeedWarnings = Math.max(0, clickSpeedWarnings - 1);
+        }
+
+        if (clickSpeedWarnings >= 20 && banUntil <= Date.now()) {
+            banUntil = Date.now() + 60 * 60 * 1000; // 1 час
+            localStorage.setItem(BAN_KEY, banUntil.toString());
+            showBanScreen();
+        }
+    }
+
+    if (banUntil > Date.now()) {
+        showBanScreen();
+    } else {
+        // бан уже истёк — подчистим
+        localStorage.removeItem(BAN_KEY);
+        banUntil = 0;
+    }
 
     // boosts: ТРЕТИЙ (индекс 2) даёт +0.9 к тапу
     const upgrades = [
@@ -1185,6 +1313,7 @@
     const LEADERBOARD_API   = API_BASE + '/api/leaderboard';
     const UPGRADE_APPLY_API = API_BASE + '/api/upgrades/apply';
     const PLAYER_STATE_API  = API_BASE + '/api/player/state';   // GET/POST сохранение игрока
+    const SCORE_SYNC_API    = API_BASE + '/api/score';          // отправка очков для рейтинга
     const REMIND_LINK       = 'https://t.me/your_channel'; // TODO ссылка "Напомнить пользователям"
 
     // ===== 3. DOM =====
@@ -1215,6 +1344,7 @@
     // invest DOM
     const investStartBtn     = document.getElementById('investStartBtn');
     const investPanelEl      = document.getElementById('investPanel');
+    const investCardEl       = document.querySelector('.invest-card');
     const investAmountEl     = document.getElementById('investAmount');
     const investPriceLabelEl = document.getElementById('investPriceLabel');
     const investValueLabelEl = document.getElementById('investValueLabel');
@@ -1295,24 +1425,49 @@
         }
     }
 
-    // ===== 6. Tap Logic (мультитач + маленькая анимация) =====
-    function handleTap(event) {
-        if (navigator.vibrate) {
-            navigator.vibrate(8);
-        }
+function syncScoreToBot() {
+    if (!tg) return;
 
-        const gain = currentPerTap();
-        balance = +(balance + gain).toFixed(2);
-        totalTaps += 1;
-        sessionTaps += 1;
+    const now = Date.now();
 
-        updateBalanceUI();
-        createTapFloat(event.clientX, event.clientY, gain);
-        scheduleSaveState();
+    // чтобы не спамить бота, шлём не чаще раза в 5 секунд
+    if (now - lastScoreSyncTs < 5000) return;
+    lastScoreSyncTs = now;
 
-        coinEl.classList.add('tap-anim');
-        setTimeout(() => coinEl.classList.remove('tap-anim'), 80);
+    try {
+        tg.sendData(JSON.stringify({
+            action: "update_score",
+            score: balance
+        }));
+    } catch (e) {
+        console.warn("sendData failed", e);
     }
+}
+
+
+    // ===== 6. Tap Logic (мультитач + маленькая анимация + античит) =====
+    function handleTap(event) {
+    if (navigator.vibrate) {
+        navigator.vibrate(8);
+    }
+
+    const gain = currentPerTap();
+    balance = +(balance + gain).toFixed(2);
+    totalTaps += 1;
+    sessionTaps += 1;
+
+    updateBalanceUI();
+
+    // 🔹 СЮДА ДОБАВЛЯЕМ ОТПРАВКУ ОЧКОВ БОТУ
+    syncScoreToBot();
+
+    createTapFloat(event.clientX, event.clientY, gain);
+    scheduleSaveState();
+
+    coinEl.classList.add('tap-anim');
+    setTimeout(() => coinEl.classList.remove('tap-anim'), 80);
+}
+
 
     coinEl.addEventListener('pointerdown', (e) => {
         e.preventDefault();
@@ -1825,12 +1980,6 @@
         }, 5000);
     }
 
-    function openInvestPanelIfNeeded() {
-        if (investActive && investAmount > 0) {
-            investPanelEl.style.display = 'block';
-        }
-    }
-
     function startNewInvestment(initialAmount) {
         balance -= initialAmount;
         updateBalanceUI();
@@ -1842,9 +1991,28 @@
         investHistory = [{ t: Date.now(), price: investPrice }];
 
         investPanelEl.style.display = 'block';
+        if (investCardEl) investCardEl.style.display = 'none';
+
         updateInvestUI();
         drawInvestChart();
         startInvestSimulation();
+        scheduleSaveState();
+    }
+
+    function topUpInvestment(amount) {
+        balance -= amount;
+        updateBalanceUI();
+
+        // покупаем дополнительные доли по текущей цене
+        const addedShares = amount / investPrice;
+        investShares += addedShares;
+        investAmount += amount;
+
+        investPanelEl.style.display = 'block';
+        if (investCardEl) investCardEl.style.display = 'none';
+
+        updateInvestUI();
+        drawInvestChart();
         scheduleSaveState();
     }
 
@@ -1868,21 +2036,6 @@
             topUpInvestment(amount);
         }
     });
-
-    function topUpInvestment(amount) {
-        balance -= amount;
-        updateBalanceUI();
-
-        // покупаем дополнительные доли по текущей цене
-        const addedShares = amount / investPrice;
-        investShares += addedShares;
-        investAmount += amount;
-
-        investPanelEl.style.display = 'block';
-        updateInvestUI();
-        drawInvestChart();
-        scheduleSaveState();
-    }
 
     investTopUpBtn.addEventListener('click', () => {
         if (!investActive || investPrice <= 0) {
@@ -1917,6 +2070,7 @@
         updateInvestUI();
         drawInvestChart();
         investPanelEl.style.display = 'none';
+        if (investCardEl) investCardEl.style.display = 'flex';
 
         balance += value;
         updateBalanceUI();
@@ -2085,14 +2239,16 @@
         scheduleGiftSpawn();
     }
 
-    // ===== 14. Cloud Save / Load =====
+    // ===== 14. Cloud + LOCAL Save / Load =====
     let saveTimeout = null;
+    const LOCAL_STATE_KEY = 'vcoin_player_state';
 
     function serializePlayerState() {
         return {
             balance,
             perTap,
             totalTaps,
+            sessionTaps,
             upgrades: Object.fromEntries(upgrades.map(u => [u.id, !!u.unlocked])),
             tasks: Object.fromEntries(tasks.map(t => [t.id, t.status])),
             invest: {
@@ -2110,6 +2266,7 @@
         if (typeof data.balance === 'number') balance = data.balance;
         if (typeof data.perTap === 'number') perTap = data.perTap;
         if (typeof data.totalTaps === 'number') totalTaps = data.totalTaps;
+        if (typeof data.sessionTaps === 'number') sessionTaps = data.sessionTaps;
 
         if (data.upgrades) {
             upgrades.forEach(u => {
@@ -2137,11 +2294,16 @@
             }
             if (investActive && investAmount > 0 && investPrice > 0) {
                 investPanelEl.style.display = 'block';
+                if (investCardEl) investCardEl.style.display = 'none';
                 drawInvestChart();
                 startInvestSimulation();
             } else {
                 investPanelEl.style.display = 'none';
+                if (investCardEl) investCardEl.style.display = 'flex';
             }
+        } else {
+            investPanelEl.style.display = 'none';
+            if (investCardEl) investCardEl.style.display = 'flex';
         }
 
         updateBalanceUI();
@@ -2152,6 +2314,18 @@
     }
 
     async function loadPlayerState() {
+        // 1) локальное состояние
+        try {
+            const local = localStorage.getItem(LOCAL_STATE_KEY);
+            if (local) {
+                const data = JSON.parse(local);
+                applyPlayerState(data);
+            }
+        } catch (e) {
+            console.warn('local load error', e);
+        }
+
+        // 2) если есть бэкенд — подгружаем оттуда
         if (!tg) return;
         try {
             const res = await fetch(PLAYER_STATE_API, {
@@ -2168,21 +2342,52 @@
         }
     }
 
-    async function savePlayerState() {
+    async function syncScoreToBot() {
         if (!tg) return;
-        saveTimeout = null;
         try {
-            const body = JSON.stringify(serializePlayerState());
-            await fetch(PLAYER_STATE_API, {
+            await fetch(SCORE_SYNC_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Telegram-Init-Data': tg.initData
                 },
-                body
+                body: JSON.stringify({
+                    score: balance
+                })
             });
         } catch (e) {
-            console.warn('savePlayerState failed', e);
+            console.warn('syncScoreToBot failed', e);
+        }
+    }
+
+    async function savePlayerState() {
+        saveTimeout = null;
+        const state = serializePlayerState();
+
+        // 1) локально
+        try {
+            localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.warn('local save error', e);
+        }
+
+        // 2) на бэкенд
+        if (tg) {
+            try {
+                await fetch(PLAYER_STATE_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Telegram-Init-Data': tg.initData
+                    },
+                    body: JSON.stringify(state)
+                });
+            } catch (e) {
+                console.warn('savePlayerState failed', e);
+            }
+
+            // 3) обновляем рейтинг на сервере
+            syncScoreToBot();
         }
     }
 
