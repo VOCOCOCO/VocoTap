@@ -224,8 +224,8 @@
         }
 
         .coin-wrapper {
-            width: 300px;
-            height: 300px;
+            width: 360px;
+            height: 360px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -313,7 +313,7 @@
         .tasks-hero::after {
             content: "❄";
             position: absolute;
-            font-size: 18px;
+            font-size: 38px;
             opacity: 0.55;
         }
 
@@ -326,6 +326,8 @@
             bottom: 10px;
             right: 20px;
         }
+
+       
 
         .tasks-card {
             padding: 12px 12px 10px;
@@ -353,17 +355,16 @@
         }
 
         .task-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 14px;
-            margin-right: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            background: radial-gradient(circle at 30% 30%,
-            #ffffff, #cbe6ff 40%, #1554ff 80%);
-        }
+    width: 32px;
+    height: 32px;
+    border-radius: 14px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: radial-gradient(circle at 30% 30%, #99a3ffba, #0056a6 40%, #1554ff 80%);
+}
 
         .task-main {
             flex: 1;
@@ -381,7 +382,7 @@
         .task-bonus {
             font-size: 11px;
             margin-top: 2px;
-            color: #ffd664;
+            color: #c8d2ff;
             font-weight: 500;
         }
 
@@ -390,17 +391,15 @@
         }
 
         .task-btn {
-            border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.25);
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 500;
-            background: linear-gradient(135deg,
-            rgba(95,168,255,0.7), rgba(9,14,34,0.95));
-            color: #ffffff;
-            cursor: pointer;
-            outline: none;
-        }
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 12px;
+    font-size: 11px;
+    background: linear-gradient(167deg, rgb(95 168 255 / 23%), rgb(15 23 56 / 0%));
+    color: #ffffffe6;
+    cursor: pointer;
+    outline: none;
+}
 
         .task-btn:active {
             transform: scale(0.97);
@@ -720,8 +719,7 @@
         }
 
         .btn-danger {
-            background: linear-gradient(135deg,
-            rgba(255,75,106,0.9), rgba(150,20,60,0.95));
+                background: linear-gradient(135deg, rgba(0, 140, 255, 0.156), rgba(46, 53, 255, 0.09));
             color: #ffffff;
         }
 
@@ -847,17 +845,14 @@
         }
 
         .nav-indicator {
-            position: absolute;
-            top: 4px;
-            bottom: 4px;
-            width: 24%;
-            border-radius: 999px;
-            background: linear-gradient(135deg,
-            rgba(95,168,255,0.35), rgba(6,10,32,0.98));
-            box-shadow: 0 8px 20px rgba(95,168,255,0.5);
-            z-index: 1;
-        }
-
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 24%;
+    border-radius: 999px;
+    background: linear-gradient(308deg, rgba(95, 168, 255, 0.05), rgb(255 255 255 / 6%));
+    z-index: 1;
+}
         .nav-btn {
             position: relative;
             z-index: 2;
@@ -984,7 +979,7 @@
                 </div>
 
                 <div class="home-note">
-                    Тапайте по монете, чтобы получать очки. Сейчас за тап: <span id="perTapLabel">+0.1</span>
+                    Сейчас за тап: <span id="perTapLabel">+0.1</span>
                 </div>
             </div>
         </section>
@@ -1021,12 +1016,12 @@
                 </div>
 
                 <div class="top-hint">
-                    Бот получит ваш результат, а сервер через Cloudflare Worker посчитает место в лиге и TOP игроков.
+                    Бот
                 </div>
 
                 <div class="top-league-wrapper">
                     <div class="top-league-header">
-                        Лига игроков
+                        Рейтинг
                         <span id="leagueSummary">обновление…</span>
                     </div>
                     <div class="league-list" id="leagueList">
@@ -1041,10 +1036,10 @@
             <div class="glass-card up-card">
                 <div class="up-header">
                     <div class="up-title">Бусты</div>
-                    <div class="up-subtitle">Увеличивай доход за тап через Stars</div>
+                    <div class="up-subtitle">Увеличивай доход за Stars</div>
                 </div>
                 <div class="up-info">
-                    Оплата происходит через <b>Telegram.WebApp.openInvoice</b>. Третий буст даёт +0.9 к тапу.
+                    Оплата происходит через <b>Telegram stars</b>. Даёт +0.9 к тапу.
                 </div>
 
                 <div class="up-list" id="upgradesList"></div>
@@ -1055,7 +1050,7 @@
                     <div class="invest-main">
                         <div class="invest-title">Вложитесь в инвестиции</div>
                         <div class="invest-text">
-                            Инвестируйте часть очков и наблюдайте за динамикой цены. Риск — как у крипты.
+                            Инвестируйте часть очков и наблюдайте за ценой. Риск — как у крипты.
                         </div>
                     </div>
                     <button class="btn btn-danger" id="investStartBtn">Начать</button>
@@ -1287,7 +1282,7 @@
         {
             id: 'boost_big',
             title: '+0.9 к тапу',
-            description: 'Мощный буст. При покупке этого буста вы получаете +0.9 к тапу.',
+            description: 'Мега буст. При покупке этого буста вы получаете +0.9 к тапу.',
             priceStars: 60,
             levelLabel: 'Legendary',
             unlocked: false,
@@ -1299,8 +1294,8 @@
     const tasks = [
         {
             id: 'task_sub_main',
-            title: 'Подпишитесь на основной канал',
-            bonusLabel: '+10% шанс',
+            title: 'Подпишитесь на канал',
+            bonusLabel: '+0.05 к тапу',
             icon: '📢',
             link: 'https://t.me/your_channel',
             status: 'new'
@@ -1308,24 +1303,24 @@
         {
             id: 'task_open_market',
             title: 'Откройте Market',
-            bonusLabel: '+10% шанс',
+            bonusLabel: '+0.05 к тапу',
             icon: '🛒',
             link: 'https://t.me/your_market',
             status: 'new'
         },
         {
             id: 'task_sub_chat',
-            title: 'Подпишитесь на чат комьюнити',
-            bonusLabel: '+10% шанс',
-            icon: '💬',
+            title: 'Подпишитесь на канал',
+            bonusLabel: '+0.05 к тапу',
+            icon: '📢',
             link: 'https://t.me/your_chat',
             status: 'new'
         },
         {
             id: 'task_open_stars',
-            title: 'Откройте Stars раздел',
-            bonusLabel: '+10% шанс',
-            icon: '⭐',
+            title: 'Откройте Market',
+            bonusLabel: '+0.05 к тапу',
+            icon: '🛒',
             link: 'https://t.me/your_some_bot',
             status: 'new'
         }
